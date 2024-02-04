@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { MathUtils } from './utils.js';
 import { c } from './controls.js';
 import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+import player from './player.js'
 
 
 // Set up the scene
@@ -9,14 +10,12 @@ const scene = new THREE.Scene();
 
 const loader = new THREE.CubeTextureLoader();
 loader.setPath( 'assets/textures/skybox/' );
-
-const textureCube = loader.load([
+const texturefloor = loader.load([
   'px.jpg', 'nx.jpg',
   'py.jpg', 'ny.jpg',
   'pz.jpg', 'nz.jpg'
 ]);
-
-scene.background = textureCube;
+scene.background = texturefloor;
 
 // Set up the camera
 const camera = new THREE.PerspectiveCamera(
@@ -26,31 +25,20 @@ const camera = new THREE.PerspectiveCamera(
   1000 // far clipping plane
 );
 
-
-
 // Set up the renderer
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('game-container').appendChild(renderer.domElement);
 
-// Set up the controls
-c.init();
-let controls = new PointerLockControls(camera, document.body);
-document.addEventListener('click', () => {
-  controls.lock();
-});
-controls.addEventListener('unlock', () => {
-  console.log('PointerLockControls: unlocked');
-});
 
 // Create a geometry, a material, and then a mesh that combines both
 const geometry = new THREE.PlaneGeometry(100, 100);
 const material = new THREE.MeshStandardMaterial({ color: 0x03ED27 });
-const cube = new THREE.Mesh(geometry, material);
-cube.rotation.x = -90 * Math.PI / 180;
-cube.scale.set(50, 50, 50);
-cube.position.set(0, 0, 0);
-scene.add(cube);
+const floor = new THREE.Mesh(geometry, material);
+floor.rotation.x = -90 * Math.PI / 180;
+floor.scale.set(50, 50, 50);
+floor.position.set(0, 0, 0);
+scene.add(floor);
 
 function addTree() {
   const treeGeometry = new THREE.CylinderGeometry(2, 5, 20, 32);
@@ -61,26 +49,32 @@ function addTree() {
   tree.position.set(MathUtils.getRandomInt(min, max), 0, MathUtils.getRandomInt(min, max));
   scene.add(tree);
 }
-
 for (let i = 0; i < 100; i++){
   addTree();
 }
+
+function createCube() {
+  return new THREE.Mesh(new THREE.BoxGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff}))
+}
+player.mesh = createCube();
+scene.add(player.mesh);
+let cubeMesh = createCube()
+
 // Lights
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
 scene.add( directionalLight )
 
 // Set the camera position
-camera.position.y = 5;
-
+c.init();
+let forward = new THREE.Vector3(1,0, 0);
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
-
-  controls.moveRight(c.d - c.a);
-  controls.moveForward(c.w - c.s);
-  camera.position.y += c.space - c.shift;
-
-
+  
+  player.mesh.position.add(new THREE.Vector3(c.w - c.s, 0, 0));
+  camera.position.copy(player.mesh.position.clone().add(player.forward.clone().multiplyScalar(-10)).add(new THREE.Vector3(0, 1, 0)));
+  camera.lookAt(player.mesh.position);
+  console.log(c.w);
   // Render the scene from the perspective of the camera
   renderer.render(scene, camera);
 }
