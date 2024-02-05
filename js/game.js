@@ -1,8 +1,7 @@
 import * as THREE from 'three';
-import { MathUtils } from './utils.js';
 import { c } from './controls.js';
-import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 import player from './player.js'
+import loadEnvironment from './environment.js';
 
 
 // Set up the scene
@@ -32,26 +31,9 @@ document.getElementById('game-container').appendChild(renderer.domElement);
 
 
 // Create a geometry, a material, and then a mesh that combines both
-const geometry = new THREE.PlaneGeometry(100, 100);
-const material = new THREE.MeshStandardMaterial({ color: 0x03ED27 });
-const floor = new THREE.Mesh(geometry, material);
-floor.rotation.x = -90 * Math.PI / 180;
-floor.scale.set(50, 50, 50);
-floor.position.set(0, 0, 0);
-scene.add(floor);
+loadEnvironment(scene)
 
-function addTree() {
-  const treeGeometry = new THREE.CylinderGeometry(2, 5, 20, 32);
-  const treeMaterial = new THREE.MeshStandardMaterial({ color: 0xCE7E00 });
-  const tree = new THREE.Mesh(treeGeometry, treeMaterial);
-  const min = -500;
-  const max = 500;
-  tree.position.set(MathUtils.getRandomInt(min, max), 0, MathUtils.getRandomInt(min, max));
-  scene.add(tree);
-}
-for (let i = 0; i < 100; i++){
-  addTree();
-}
+
 
 function createCube() {
   return new THREE.Mesh(new THREE.BoxGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff}))
@@ -64,23 +46,36 @@ player.mesh.position.setY(1)
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
 scene.add( directionalLight )
 
-// Set the camera position
+// Init 
 c.init();
-let forward = new THREE.Vector3(1,0, 0);
+let cameraForward = player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
+
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
   const dt = 1/ 60;
-  player.theta += 0.01*(c.a -c.d);
+  // player steering
+  player.thetaSpeed += player.thetaPower*(c.a -c.d)*dt;
+  player.thetaSpeed *= (1 - player.thetaDrag);
+  player.theta += player.thetaSpeed * dt;
+
+  // player looking
   player.forward.setFromSphericalCoords(1, Math.PI/2, player.theta);
+  player.forward.normalize();
   player.mesh.lookAt(player.mesh.position.clone().add(player.forward.clone()))
-  player.velocity.add(player.forward.clone().multiplyScalar(player.power*(c.w - c.s)*dt));
+  
+  // player motion
+  player.velocity.add(player.forward.clone().multiplyScalar(player.power*(c.w - c.s)));
+  player.velocity.multiplyScalar(1 - player.redirectAmount);
+  player.velocity.add(player.forward.clone().multiplyScalar(player.redirectAmount*player.velocity.length()));
   player.velocity.multiplyScalar(1 - player.drag);
-  player.mesh.position.add(player.velocity);
-  camera.position.copy(player.mesh.position.clone().add(player.forward.clone().multiplyScalar(-10)).add(new THREE.Vector3(0, 5, 0)));
+
+  player.mesh.position.add(player.velocity.clone().multiplyScalar(dt));
+
+  // camera 
+  cameraForward.lerp(player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0)), 0.1);
+  camera.position.copy(player.mesh.position.clone().add(cameraForward));
   camera.lookAt(player.mesh.position);
-  console.log(player.forward);
-  // Render the scene from the perspective of the camera
   renderer.render(scene, camera);
 }
 
