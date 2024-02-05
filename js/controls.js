@@ -68,5 +68,3 @@ export const c = {
         return new THREE.Vector3(c.d - c.a, c.space - c.shift, c.w - c.s);
     }
 }
-
-export default c;

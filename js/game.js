@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { c } from './controls.js';
-import player from './player.js'
+import {player} from './player.js'
 import loadEnvironment from './environment.js';
 
 
