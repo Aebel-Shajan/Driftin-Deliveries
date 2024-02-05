@@ -58,7 +58,7 @@ function createCube() {
 }
 player.mesh = createCube();
 scene.add(player.mesh);
-let cubeMesh = createCube()
+player.mesh.position.setY(1)
 
 // Lights
 const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -70,11 +70,16 @@ let forward = new THREE.Vector3(1,0, 0);
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
-  
-  player.mesh.position.add(new THREE.Vector3(c.w - c.s, 0, 0));
-  camera.position.copy(player.mesh.position.clone().add(player.forward.clone().multiplyScalar(-10)).add(new THREE.Vector3(0, 1, 0)));
+  const dt = 1/ 60;
+  player.theta += 0.01*(c.a -c.d);
+  player.forward.setFromSphericalCoords(1, Math.PI/2, player.theta);
+  player.mesh.lookAt(player.mesh.position.clone().add(player.forward.clone()))
+  player.velocity.add(player.forward.clone().multiplyScalar(player.power*(c.w - c.s)*dt));
+  player.velocity.multiplyScalar(1 - player.drag);
+  player.mesh.position.add(player.velocity);
+  camera.position.copy(player.mesh.position.clone().add(player.forward.clone().multiplyScalar(-10)).add(new THREE.Vector3(0, 5, 0)));
   camera.lookAt(player.mesh.position);
-  console.log(c.w);
+  console.log(player.forward);
   // Render the scene from the perspective of the camera
   renderer.render(scene, camera);
 }
