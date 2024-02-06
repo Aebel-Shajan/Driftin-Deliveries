@@ -22,20 +22,10 @@ renderer.shadowMap.type = THREE.BasicShadowMap;
 document.getElementById('game-container').appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-
-// Create a geometry, a material, and then a mesh that combines both
-loadEnvironment(scene)
-
-function createCube() {
-  return new THREE.Mesh(new THREE.BoxGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff}))
-}
-player.mesh = createCube();
-scene.add(player.mesh);
-player.mesh.position.setY(1)
-
-
 // Init 
+loadEnvironment(scene)
 c.init();
+player.init(scene);
 let cameraForward = player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
 
 // Animation loop
