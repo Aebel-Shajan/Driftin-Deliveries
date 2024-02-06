@@ -3,6 +3,8 @@ import * as THREE from "three";
 export default function loadEnvironment(scene) {
     scene.add(createFloor());
     createCity(scene);
+    setupBackground(scene);
+    setupLighting(scene);
 }
 
 function createCity(scene) {
@@ -37,6 +39,7 @@ function createTree() {
     const treeGeometry = new THREE.CylinderGeometry(2, 5, 20, 32);
     const treeMaterial = new THREE.MeshStandardMaterial({ color: 0xCE7E00 });
     const tree = new THREE.Mesh(treeGeometry, treeMaterial);
+    tree.castShadow = true;
     return tree;
 }
 
@@ -47,12 +50,34 @@ function createFloor() {
     floor.rotation.x = -90 * Math.PI / 180;
     floor.scale.set(50, 50, 50);
     floor.position.set(0, 0, 0);
+    floor.receiveShadow = true;
     return floor;
 }
 
 function createCube() {
     const cube = new THREE.Mesh(new THREE.BoxGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff }));
+    cube.castShadow = true;
     return cube;
+}
+
+function setupLighting(scene) {
+    // Lights
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(20, 100, 10);
+    directionalLight.target.position.set(0, 0, 0);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
+}
+
+function setupBackground(scene) {
+    const loader = new THREE.CubeTextureLoader();
+    loader.setPath('assets/textures/skybox/');
+    const texturefloor = loader.load([
+        'px.jpg', 'nx.jpg',
+        'py.jpg', 'ny.jpg',
+        'pz.jpg', 'nz.jpg'
+    ]);
+    scene.background = texturefloor;
 }
 
 function getRandomInt(min, max) {
@@ -60,3 +85,5 @@ function getRandomInt(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
 }
+
+

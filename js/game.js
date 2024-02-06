@@ -7,15 +7,6 @@ import loadEnvironment from './environment.js';
 // Set up the scene
 const scene = new THREE.Scene();
 
-const loader = new THREE.CubeTextureLoader();
-loader.setPath( 'assets/textures/skybox/' );
-const texturefloor = loader.load([
-  'px.jpg', 'nx.jpg',
-  'py.jpg', 'ny.jpg',
-  'pz.jpg', 'nz.jpg'
-]);
-scene.background = texturefloor;
-
 // Set up the camera
 const camera = new THREE.PerspectiveCamera(
   75, // field of view
@@ -26,14 +17,14 @@ const camera = new THREE.PerspectiveCamera(
 
 // Set up the renderer
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.BasicShadowMap;
 document.getElementById('game-container').appendChild(renderer.domElement);
+renderer.setSize(window.innerWidth, window.innerHeight);
 
 
 // Create a geometry, a material, and then a mesh that combines both
 loadEnvironment(scene)
-
-
 
 function createCube() {
   return new THREE.Mesh(new THREE.BoxGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff}))
@@ -42,9 +33,6 @@ player.mesh = createCube();
 scene.add(player.mesh);
 player.mesh.position.setY(1)
 
-// Lights
-const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-scene.add( directionalLight )
 
 // Init 
 c.init();
