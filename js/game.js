@@ -17,8 +17,7 @@ const camera = new THREE.PerspectiveCamera(
 
 // Set up the renderer
 const renderer = new THREE.WebGLRenderer();
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.BasicShadowMap;
+renderer.shadowMap.enabled = true; // Enable shadows
 document.getElementById('game-container').appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
 

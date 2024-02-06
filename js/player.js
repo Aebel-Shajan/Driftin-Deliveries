@@ -14,8 +14,9 @@ export let player = {
 
     init: function(scene) {
         player.mesh = new THREE.Mesh(new THREE.BoxGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff }));
+        player.mesh.castShadow = true;
         scene.add(player.mesh);
-        player.mesh.position.setY(1);
+        player.mesh.position.setY(0.5);
     },
 
     controlPlayer: function (c, dt) {
