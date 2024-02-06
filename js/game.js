@@ -42,23 +42,8 @@ let cameraForward = player.forward.clone().multiplyScalar(-10).add(new THREE.Vec
 function animate() {
   requestAnimationFrame(animate);
   const dt = 1/ 60;
-  // player steering
-  player.thetaSpeed += player.thetaPower*(c.a -c.d)*dt;
-  player.thetaSpeed *= (1 - player.thetaDrag);
-  player.theta += player.thetaSpeed * dt;
 
-  // player looking
-  player.forward.setFromSphericalCoords(1, Math.PI/2, player.theta);
-  player.forward.normalize();
-  player.mesh.lookAt(player.mesh.position.clone().add(player.forward.clone()))
-  
-  // player motion
-  player.velocity.add(player.forward.clone().multiplyScalar(player.power*(c.w - c.s)));
-  player.velocity.multiplyScalar(1 - player.redirectAmount);
-  player.velocity.add(player.forward.clone().multiplyScalar(player.redirectAmount*player.velocity.length()));
-  player.velocity.multiplyScalar(1 - player.drag);
-
-  player.mesh.position.add(player.velocity.clone().multiplyScalar(dt));
+  player.controlPlayer(c, dt);
 
   // camera 
   cameraForward.lerp(player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0)), 0.1);
