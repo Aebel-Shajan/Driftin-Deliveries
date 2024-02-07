@@ -9,10 +9,10 @@ export default function loadEnvironment(scene) {
 
 function createCity(scene) {
     const city = {
-        citySize: 5,
-        blockSize: 3,
+        citySize: 6,
+        blockSize: 4,
         buildingLength: 20,
-        roadWidth: 20,
+        roadWidth: 30,
         buildingColors: [0xFF90BC, 0xFFC0D9, 0x8ACDD7]
     }
 
@@ -51,7 +51,7 @@ function createTree() {
 
 function createFloor() {
     // Create a ground plane
-    const planeGeometry = new THREE.PlaneGeometry(500, 500);
+    const planeGeometry = new THREE.PlaneGeometry(1000, 1000);
     const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xF9F9E0 });
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.rotation.x = -Math.PI / 2; // Rotate to lay flat
