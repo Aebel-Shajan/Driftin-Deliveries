@@ -1,0 +1,30 @@
+{
+  "name": "driftin-deliveries",
+  "version": "1.0.0",
+  "description": "Food delivery game made using Three.js and Cannon-Es",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aebel-Shajan/Drifitin-Deliveries.git"
+  },
+  "keywords": [
+    "three",
+    "cannon-es",
+    "3d",
+    "game",
+    "car"
+  ],
+  "author": "Aebel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aebel-Shajan/Drifitin-Deliveries/issues"
+  },
+  "homepage": "https://github.com/Aebel-Shajan/Drifitin-Deliveries#readme",
+  "dependencies": {
+    "cannon-es": "^0.20.0",
+    "three": "^0.161.0"
+  }
+}
