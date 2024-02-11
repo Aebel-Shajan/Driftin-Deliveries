@@ -25,6 +25,7 @@
   "homepage": "https://github.com/Aebel-Shajan/Drifitin-Deliveries#readme",
   "dependencies": {
     "cannon-es": "^0.20.0",
+    "cannon-es-debugger": "^1.0.0",
     "three": "^0.161.0"
   },
   "devDependencies": {
