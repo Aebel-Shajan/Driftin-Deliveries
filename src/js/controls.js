@@ -1,17 +1,17 @@
 const c = {
-    KeyW:false,
-    KeyA: false,
-    KeyS: false,
-    KeyD: false,
-    Space: false
+    KeyW: 0,
+    KeyA: 0,
+    KeyS: 0,
+    KeyD: 0,
+    Space: 0
 };
 // https://www.toptal.com/developers/keycode
 function handleKeyDown(event) {
-    c[event.code] = true;
+    c[event.code] = 1;
 }
 
 function handleKeyUp(event) {
-    c[event.code] = false;
+    c[event.code] = 0;
 }
 
 document.addEventListener('keydown', handleKeyDown);
