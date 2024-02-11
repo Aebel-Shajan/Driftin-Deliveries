@@ -28,7 +28,10 @@ export let player = {
         });
         this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
     },
-
+    update: function() {
+        this.mesh.position.copy(this.body.position);
+        this.mesh.quaternion.copy(this.body.quaternion);
+    },
     controlPlayer: function (c, dt) {
         // player steering
         player.thetaSpeed += player.thetaPower * (c.KeyA - c.KeyD) * dt;
