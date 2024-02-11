@@ -60,7 +60,10 @@ function createFloor(scene, world) {
         body: new CANNON.Body(
             {
                 shape: new CANNON.Plane(),
-                type: CANNON.Body.STATIC
+                type: CANNON.Body.STATIC,
+                material: new CANNON.Material({
+                    friction: 0.5
+                }),
             }
         ),
     }
