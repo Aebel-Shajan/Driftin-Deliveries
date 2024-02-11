@@ -38,24 +38,31 @@ export let player = {
         return vec
     },
     getForward: function() {
-        return this.getRelativeVector(0, 0, 1);
+        const forward = this.getRelativeVector(0, 0, 1);
+        return forward;
     },
     controlPlayer: function (c, dt) {
         // player steering
-        player.thetaSpeed += player.thetaPower * (c.KeyA - c.KeyD) * dt;
-        player.thetaSpeed *= (1 - player.thetaDrag);
-        player.theta += player.thetaSpeed * dt;
+        // player.thetaSpeed += player.thetaPower * (c.KeyA - c.KeyD) * dt;
+        // player.thetaSpeed *= (1 - player.thetaDrag);
+        // player.theta += player.thetaSpeed * dt;
+        //this.body.applyTorque(this.getRelativeVector(0, 1, 0).multiplyScalar(10 * (c.KeyA - c.KeyD)));
 
         // player motion
-        player.velocity.add(player.forward.clone().multiplyScalar(player.power * (c.KeyW - c.KeyS)));
-        player.velocity.multiplyScalar(1 - player.redirectAmount);
-        player.velocity.add(player.forward.clone().multiplyScalar(player.redirectAmount * player.velocity.length()));
-        player.velocity.multiplyScalar(1 - player.drag);
-        player.mesh.position.add(player.velocity.clone().multiplyScalar(dt));
-
+        // player.velocity.add(player.forward.clone().multiplyScalar(player.power * (c.KeyW - c.KeyS)));
+        // player.velocity.multiplyScalar(1 - player.redirectAmount);
+        // player.velocity.add(player.forward.clone().multiplyScalar(player.redirectAmount * player.velocity.length()));
+        // player.velocity.multiplyScalar(1 - player.drag);
+        // player.mesh.position.add(player.velocity.clone().multiplyScalar(dt));
+        this.update();
+        this.forward = this.getForward();
+        const v = this.getForward().multiplyScalar(10 * (c.KeyW - c.KeyS));
+        this.body.applyForce(v);
+        
+        
         // player looking
-        player.forward.setFromSphericalCoords(1, Math.PI / 2, player.theta);
-        player.forward.normalize();
-        player.mesh.lookAt(player.mesh.position.clone().add(player.forward.clone()))
+        // player.forward.setFromSphericalCoords(1, Math.PI / 2, player.theta);
+        // player.forward.normalize();
+        // player.mesh.lookAt(player.mesh.position.clone().add(player.forward.clone()))
     }
 }
