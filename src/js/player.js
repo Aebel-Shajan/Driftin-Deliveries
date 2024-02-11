@@ -21,12 +21,12 @@ export let player = {
 
     controlPlayer: function (c, dt) {
         // player steering
-        player.thetaSpeed += player.thetaPower * (c.a - c.d) * dt;
+        player.thetaSpeed += player.thetaPower * (c.KeyA - c.KeyD) * dt;
         player.thetaSpeed *= (1 - player.thetaDrag);
         player.theta += player.thetaSpeed * dt;
 
         // player motion
-        player.velocity.add(player.forward.clone().multiplyScalar(player.power * (c.w - c.s)));
+        player.velocity.add(player.forward.clone().multiplyScalar(player.power * (c.KeyW - c.KeyS)));
         player.velocity.multiplyScalar(1 - player.redirectAmount);
         player.velocity.add(player.forward.clone().multiplyScalar(player.redirectAmount * player.velocity.length()));
         player.velocity.multiplyScalar(1 - player.drag);
