@@ -1,11 +1,18 @@
 import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+import CannonDebugger from 'cannon-es-debugger';
 import { c } from './controls.js';
 import {player} from './player.js'
 import loadEnvironment from './environment.js';
 
 
-// Set up the scene
+// Setup
 const scene = new THREE.Scene();
+const world = new CANNON.World({
+    gravity: new CANNON.Vec3(0, -9.81, 0)
+});
+const cannonDebugger = new CannonDebugger(scene, world, {})
+
 
 // Set up the camera
 const camera = new THREE.PerspectiveCamera(
@@ -23,7 +30,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Init 
 loadEnvironment(scene)
-player.init(scene);
+player.init();
+scene.add(player.mesh);
+// world.addBody(player.body);
 let cameraForward = player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
 
 // Animation loop
