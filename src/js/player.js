@@ -32,6 +32,14 @@ export let player = {
         this.mesh.position.copy(this.body.position);
         this.mesh.quaternion.copy(this.body.quaternion);
     },
+    getRelativeVector: function (x, y, z) {
+        const vec = new THREE.Vector3(x, y, z);
+        vec.applyQuaternion(this.body.quaternion);
+        return vec
+    },
+    getForward: function() {
+        return this.getRelativeVector(0, 0, 1);
+    },
     controlPlayer: function (c, dt) {
         // player steering
         player.thetaSpeed += player.thetaPower * (c.KeyA - c.KeyD) * dt;
