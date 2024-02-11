@@ -29,16 +29,19 @@ document.getElementById('game-container').appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Init 
-loadEnvironment(scene)
+loadEnvironment(scene, world)
 player.init();
 scene.add(player.mesh);
-// world.addBody(player.body);
+world.addBody(player.body);
 let cameraForward = player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
+const dt = 1/ 60;
 
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
-  const dt = 1/ 60;
+  world.step(dt);
+  cannonDebugger.update();
+  
 
   player.controlPlayer(c, dt);
 

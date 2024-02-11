@@ -1,7 +1,8 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 
-export default function loadEnvironment(scene) {
-    scene.add(createFloor());
+export default function loadEnvironment(scene, world) {
+    createFloor(scene, world);
     createCity(scene);
     setupBackground(scene);
     setupLighting(scene);
@@ -20,7 +21,7 @@ function createCity(scene) {
         for (let blockZ = 0; blockZ < city.citySize; blockZ++) {
             const blockPlusRoad = (city.blockSize * city.buildingLength) + city.roadWidth;
             const blockStartPos = new THREE.Vector3(blockPlusRoad * blockX, 0, blockPlusRoad * blockZ);
-            blockStartPos.add(new THREE.Vector3(1, 0, 1).multiplyScalar(blockPlusRoad *city.citySize * -0.5))
+            blockStartPos.add(new THREE.Vector3(1, 0, 1).multiplyScalar(blockPlusRoad * city.citySize * -0.5))
             for (let buildingX = 0; buildingX < city.blockSize; buildingX++) {
                 for (let buildingZ = 0; buildingZ < city.blockSize; buildingZ++) {
                     const buildingOffset = new THREE.Vector3(1, 0, 1).multiplyScalar(city.buildingLength);
@@ -49,15 +50,25 @@ function createTree() {
     return tree;
 }
 
-function createFloor() {
+function createFloor(scene, world) {
     // Create a ground plane
-    const planeGeometry = new THREE.PlaneGeometry(1000, 1000);
-    const planeMaterial = new THREE.MeshStandardMaterial({ color: 0xF9F9E0 });
-    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.rotation.x = -Math.PI / 2; // Rotate to lay flat
-    plane.receiveShadow = true; // Enable shadow reception
-    plane.position.set(0, 0, 0);
-
+    const plane = {
+        mesh: new THREE.Mesh(
+            new THREE.PlaneGeometry(1000, 1000),
+            new THREE.MeshStandardMaterial({ color: 0xF9F9E0 })
+        ),
+        body: new CANNON.Body(
+            {
+                shape: new CANNON.Plane(),
+                type: CANNON.Body.STATIC
+            }
+        ),
+    }
+    plane.body.quaternion.setFromEuler(- Math.PI / 2, 0, 0);
+    plane.mesh.position.copy(plane.body.position);
+    plane.mesh.quaternion.copy(plane.body.quaternion);
+    scene.add(plane.mesh);
+    world.addBody(plane.body);
     return plane;
 }
 
@@ -74,7 +85,7 @@ function setupLighting(scene) {
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(100, 100, 100);
     light.castShadow = true; // Enable shadows for light
-    
+
     scene.add(light);
     // Add ambient light
     scene.add(new THREE.AmbientLight(0xffffff));
