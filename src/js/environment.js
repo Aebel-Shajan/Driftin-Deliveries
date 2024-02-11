@@ -2,13 +2,13 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es";
 
 export default function loadEnvironment(scene, world) {
-    createFloor(scene, world);
-    createCity(scene);
+    createFloorObject(scene, world);
+    createCity(scene, world);
     setupBackground(scene);
     setupLighting(scene);
 }
 
-function createCity(scene) {
+function createCity(scene, world) {
     const city = {
         citySize: 6,
         blockSize: 4,
@@ -29,13 +29,14 @@ function createCity(scene) {
                     const buildingHeight = getRandomInt(5, 3 * city.buildingLength);
                     buildingPos.add(new THREE.Vector3(city.buildingLength * buildingX, 0, city.buildingLength * buildingZ));
                     buildingPos.add(new THREE.Vector3(0, 0.5 * buildingHeight, 0));
-                    let building = createCube();
-                    building.geometry.scale(city.buildingLength, buildingHeight, city.buildingLength)
-                    const randomColor = city.buildingColors[Math.floor(Math.random() * city.buildingColors.length)];
-                    building.material.color.setHex(randomColor)
-                    scene.add(building);
-                    building.position.copy(buildingPos);
 
+                    let building = createCubeObject(new THREE.Vector3(city.buildingLength, buildingHeight, city.buildingLength));
+                    const randomColor = city.buildingColors[Math.floor(Math.random() * city.buildingColors.length)];
+                    building.mesh.material.color.setHex(randomColor)
+                    building.body.position.copy(buildingPos);
+                    building.update();
+                    scene.add(building.mesh);
+                    world.addBody(building.body)
                 }
             }
         }
@@ -50,7 +51,7 @@ function createTree() {
     return tree;
 }
 
-function createFloor(scene, world) {
+function createFloorObject(scene, world) {
     // Create a ground plane
     const plane = {
         mesh: new THREE.Mesh(
@@ -75,12 +76,26 @@ function createFloor(scene, world) {
     return plane;
 }
 
-function createCube() {
-    const boxGeometry = new THREE.BoxGeometry();
-    const boxMaterial = new THREE.MeshStandardMaterial();
-    const box = new THREE.Mesh(boxGeometry, boxMaterial);
-    box.castShadow = true; // Enable shadow casting
-    return box;
+function createCubeObject(scale) {
+    const cube = {
+        mesh: new THREE.Mesh(
+            new THREE.BoxGeometry(scale.x, scale.y, scale.z),
+            new THREE.MeshBasicMaterial()
+        ),
+        body: new CANNON.Body({
+            shape: new CANNON.Box(scale.multiplyScalar(0.5)),
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material({
+                friction: 0.5
+            })
+        }),
+        update: function() {
+            this.mesh.position.copy(this.body.position);
+            this.mesh.quaternion.copy(this.body.quaternion);
+        }
+        
+    }
+    return cube;
 }
 
 function setupLighting(scene) {
