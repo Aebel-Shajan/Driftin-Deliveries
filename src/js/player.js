@@ -42,11 +42,13 @@ export let player = {
         return forward;
     },
     controlPlayer: function (c, dt) {
+        this.update();
         // player steering
         // player.thetaSpeed += player.thetaPower * (c.KeyA - c.KeyD) * dt;
         // player.thetaSpeed *= (1 - player.thetaDrag);
         // player.theta += player.thetaSpeed * dt;
-        //this.body.applyTorque(this.getRelativeVector(0, 1, 0).multiplyScalar(10 * (c.KeyA - c.KeyD)));
+        this.body.applyTorque(this.getRelativeVector(0, 1, 0).multiplyScalar(10 * (c.KeyA - c.KeyD)));
+        
 
         // player motion
         // player.velocity.add(player.forward.clone().multiplyScalar(player.power * (c.KeyW - c.KeyS)));
@@ -54,7 +56,6 @@ export let player = {
         // player.velocity.add(player.forward.clone().multiplyScalar(player.redirectAmount * player.velocity.length()));
         // player.velocity.multiplyScalar(1 - player.drag);
         // player.mesh.position.add(player.velocity.clone().multiplyScalar(dt));
-        this.update();
         this.forward = this.getForward();
         const v = this.getForward().multiplyScalar(10 * (c.KeyW - c.KeyS));
         this.body.applyForce(v);
