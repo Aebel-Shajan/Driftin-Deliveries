@@ -1,22 +1,32 @@
 import * as THREE from "three";
+import * as CANNON from "cannon-es";
 
 export let player = {
+    mesh: new THREE.Mesh(),
+    body: new CANNON.Body(),
+    physicsMaterial: new CANNON.Material(),
     redirectAmount: 0.1,
     velocity: new THREE.Vector3(0, 0, 0),
     power: 1,
     drag: 0.01,
-    mesh: null,
     thetaSpeed: 0,
     thetaPower: 10,
     thetaDrag: 0.1,
     theta: 0,
     forward: new THREE.Vector3(1, 0, 0),
 
-    init: function(scene) {
-        player.mesh = new THREE.Mesh(new THREE.BoxGeometry, new THREE.MeshStandardMaterial({ color: 0xffffff }));
-        player.mesh.castShadow = true;
-        scene.add(player.mesh);
-        player.mesh.position.setY(0.5);
+    init: function() {
+        this.mesh = new THREE.Mesh(
+            new THREE.BoxGeometry, 
+            new THREE.MeshStandardMaterial({ color: 0xffffff })
+        );
+        this.body = new CANNON.Body({
+            shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+            mass: 1,
+            position: new CANNON.Vec3(0, 1, 2),
+            material: this.physicsMaterial
+        });
+        this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
     },
 
     controlPlayer: function (c, dt) {
@@ -36,6 +46,5 @@ export let player = {
         player.forward.setFromSphericalCoords(1, Math.PI / 2, player.theta);
         player.forward.normalize();
         player.mesh.lookAt(player.mesh.position.clone().add(player.forward.clone()))
-
     }
 }
