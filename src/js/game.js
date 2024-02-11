@@ -23,7 +23,6 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Init 
 loadEnvironment(scene)
-c.init();
 player.init(scene);
 let cameraForward = player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
 
