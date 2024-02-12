@@ -47,7 +47,12 @@ function animate() {
   player.controlPlayer(c, dt);
 
   // camera 
-  cameraForward.lerp(player.getForward().multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0)), 0.1);
+  const motionDir = player.getForward().clone();
+  if (player.body.velocity.length() > 0.1) {
+    const velDir = new THREE.Vector3().copy(player.body.velocity).normalize();
+    motionDir.lerp(velDir, 0.5);
+  }
+  cameraForward.lerp(motionDir.multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0)), 0.1);
   camera.position.copy(player.mesh.position.clone().add(cameraForward));
   camera.lookAt(player.mesh.position);
   renderer.render(scene, camera);
