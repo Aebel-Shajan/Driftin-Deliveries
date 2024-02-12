@@ -31,6 +31,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // Init 
 loadEnvironment(scene, world)
 player.init();
+scene.add(player.forceDebug);
 scene.add(player.mesh);
 world.addBody(player.body);
 let cameraForward = player.getForward().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
