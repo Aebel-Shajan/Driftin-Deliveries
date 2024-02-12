@@ -37,6 +37,10 @@ export let player = {
         const forward = this.getRelativeVector(0, 0, 1);
         return forward;
     },
+    getSideward: function () {
+        const forward = this.getRelativeVector(1, 0, 0);
+        return forward;
+    },
     controlPlayer: function (c, dt) {
         this.update();
         const torque =
