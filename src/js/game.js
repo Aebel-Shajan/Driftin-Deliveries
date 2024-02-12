@@ -33,7 +33,7 @@ loadEnvironment(scene, world)
 player.init();
 scene.add(player.mesh);
 world.addBody(player.body);
-let cameraForward = player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
+let cameraForward = player.getForward().multiplyScalar(-10).add(new THREE.Vector3(0, 5, 0));
 const dt = 1/ 60;
 
 // Animation loop

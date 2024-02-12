@@ -48,10 +48,10 @@ export let player = {
         // player motion
         const newVel = new THREE.Vector3();
         newVel.copy(this.body.velocity);
-        newVel.add(player.forward.clone().multiplyScalar((c.KeyW - c.KeyS)))
+        newVel.add(this.getForward().multiplyScalar((c.KeyW - c.KeyS)))
         .multiplyScalar(1 - player.redirectAmount)
         .add(
-            player.forward.clone()
+            this.getForward()
             .multiplyScalar(player.redirectAmount * player.body.velocity.length())
         );
         this.body.velocity.copy(newVel);
