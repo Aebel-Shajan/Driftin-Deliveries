@@ -22,7 +22,6 @@ export let player = {
         });
         this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
         this.body.angularDamping = 0.9;
-        this.body.linearDamping = 0.1;
     },
     update: function () {
         this.mesh.position.copy(this.body.position);
@@ -50,14 +49,18 @@ export let player = {
 
 
         // player motion
-        const newVel = new THREE.Vector3();
-        newVel.copy(this.body.velocity);
-        newVel.add(this.getForward().multiplyScalar((c.KeyW - c.KeyS)))
-        .multiplyScalar(1 - player.redirectAmount)
-        .add(
-            this.getForward()
-            .multiplyScalar(player.redirectAmount * player.body.velocity.length())
-        );
-        this.body.velocity.copy(newVel);
+        // const newVel = new THREE.Vector3();
+        // newVel.copy(this.body.velocity);
+        // newVel.add(this.getForward().multiplyScalar((c.KeyW - c.KeyS)))
+        // .multiplyScalar(1 - player.redirectAmount)
+        // .add(
+        //     this.getForward()
+        //     .multiplyScalar(player.redirectAmount * player.body.velocity.length())
+        // );
+        // this.body.velocity.copy(newVel);
+        this.body.applyForce(this.getForward().multiplyScalar(30* (c.KeyW - c.KeyS)));
+        this.body.applyForce(this.body.velocity.scale(-0.5));// drag
+        const parallelVel = this.body.velocity.dot(this.getForward());
+        const perpendicularVel = this.body.velocity.dot(this.getSideward());
     }
 }
