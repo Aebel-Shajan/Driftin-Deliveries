@@ -46,7 +46,7 @@ function animate() {
   player.controlPlayer(c, dt);
 
   // camera 
-  cameraForward.lerp(player.forward.clone().multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0)), 0.1);
+  cameraForward.lerp(player.getForward().multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0)), 0.1);
   camera.position.copy(player.mesh.position.clone().add(cameraForward));
   camera.lookAt(player.mesh.position);
   renderer.render(scene, camera);

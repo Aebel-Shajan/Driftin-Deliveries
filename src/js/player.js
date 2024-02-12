@@ -6,14 +6,6 @@ export let player = {
     body: new CANNON.Body(),
     physicsMaterial: new CANNON.Material(),
     redirectAmount: 0.1,
-    velocity: new THREE.Vector3(0, 0, 0),
-    power: 1,
-    drag: 0.01,
-    thetaSpeed: 0,
-    thetaPower: 10,
-    thetaDrag: 0.1,
-    theta: 0,
-    forward: new THREE.Vector3(1, 0, 0),
 
     init: function () {
         this.mesh = new THREE.Mesh(
@@ -56,14 +48,12 @@ export let player = {
         // player motion
         const newVel = new THREE.Vector3();
         newVel.copy(this.body.velocity);
-        newVel.add(player.forward.clone().multiplyScalar(player.power * (c.KeyW - c.KeyS)))
+        newVel.add(player.forward.clone().multiplyScalar((c.KeyW - c.KeyS)))
         .multiplyScalar(1 - player.redirectAmount)
         .add(
             player.forward.clone()
             .multiplyScalar(player.redirectAmount * player.body.velocity.length())
-        )
-        .multiplyScalar(1 - player.drag);
-        this.forward = this.getForward();
+        );
         this.body.velocity.copy(newVel);
     }
 }
