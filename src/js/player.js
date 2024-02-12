@@ -56,18 +56,18 @@ export let player = {
         this.body.angularVelocity.lerp(torque, 0.4, this.body.angularVelocity);
 
         // linear velocity control
-        const controlForce = this.getForward().multiplyScalar(10 * (c.KeyW - c.KeyS));
-        const dragForce = this.body.velocity.scale(-0.5);
+        const controlForce = this.getForward().multiplyScalar(15 * (c.KeyW - c.KeyS));
+        const dragForce = this.body.velocity.scale(-0.1);
         const perpendicularVel = this.body.velocity.dot(this.getSideward());
-        const centripetalForce = this.getSideward().multiplyScalar(-10 * perpendicularVel);
+        const redirectAmount = c.ShiftLeft ? 1 : 4;
+        const centripetalForce = this.getSideward().multiplyScalar(-1 * redirectAmount * perpendicularVel);
         this.body.applyForce(controlForce);
         this.body.applyForce(dragForce);// drag
         this.body.applyForce(centripetalForce);
 
-
         // force debug
-        this.forceDebug.position.copy(this.body.position);
-        this.forceDebug.setDirection(centripetalForce);
-        this.forceDebug.setLength(centripetalForce.length());
+        this.forceDebug.position.copy(this.body.position.vadd(new CANNON.Vec3(0, 2, 0)));
+        this.forceDebug.setDirection(this.body.velocity);
+        this.forceDebug.setLength(3);
     }
 }

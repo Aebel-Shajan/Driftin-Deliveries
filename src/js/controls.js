@@ -3,7 +3,8 @@ const c = {
     KeyA: 0,
     KeyS: 0,
     KeyD: 0,
-    Space: 0
+    Space: 0,
+    ShiftLeft: 0
 };
 // https://www.toptal.com/developers/keycode
 function handleKeyDown(event) {
