@@ -65,12 +65,5 @@ export let player = {
         .multiplyScalar(1 - player.drag);
         this.forward = this.getForward();
         this.body.velocity.copy(newVel);
-        
-
-
-        // player looking
-        // player.forward.setFromSphericalCoords(1, Math.PI / 2, player.theta);
-        // player.forward.normalize();
-        // player.mesh.lookAt(player.mesh.position.clone().add(player.forward.clone()))
     }
 }
