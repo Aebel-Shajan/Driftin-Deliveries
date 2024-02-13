@@ -59,7 +59,7 @@ export let player = {
         const controlForce = this.getForward().multiplyScalar(15 * (c.KeyW - c.KeyS));
         const dragForce = this.body.velocity.scale(-0.1);
         const perpendicularVel = this.body.velocity.dot(this.getSideward());
-        const redirectAmount = c.ShiftLeft ? 1 : 4;
+        const redirectAmount = c.ShiftLeft ? 0.6 : 4;
         const centripetalForce = this.getSideward().multiplyScalar(-1 * redirectAmount * perpendicularVel);
         this.body.applyForce(controlForce);
         this.body.applyForce(dragForce);// drag

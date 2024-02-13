@@ -13,7 +13,7 @@ function createCity(scene, world) {
         citySize: 6,
         blockSize: 4,
         buildingLength: 20,
-        roadWidth: 50,
+        roadWidth: 30,
         buildingColors: [0xFF90BC, 0xFFC0D9, 0x8ACDD7]
     }
 
