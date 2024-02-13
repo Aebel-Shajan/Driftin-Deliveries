@@ -13,7 +13,7 @@ export let player = {
         const gltf = await loader.loadAsync('assets/models/raceFuture.glb')
             this.mesh = gltf.scene;
             this.body = new CANNON.Body({
-                shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+                shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 1)),
                 mass: 1,
                 position: new CANNON.Vec3(0, 1, 2),
                 material: new CANNON.Material({
@@ -29,10 +29,12 @@ export let player = {
                 );
     },
     update: function () {
-        this.mesh.position.copy(this.body.position);
-        const quaternion = new CANNON.Quaternion();
-        quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI);
-        this.mesh.quaternion.copy(this.body.quaternion.mult(quaternion)); // model has forward as -Z but three js has forward as +Z. I HATE
+        const positionOffset = new CANNON.Vec3(0, -0.5, 0);
+        // model has forward as -Z but three js has forward as +Z. I HATE
+        const quaternionOffset = new CANNON.Quaternion();
+        quaternionOffset.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI);
+        this.mesh.position.copy(this.body.position.vadd(positionOffset));
+        this.mesh.quaternion.copy(this.body.quaternion.mult(quaternionOffset)); 
     },
     getRelativeVector: function (x, y, z) {
         const vec = new THREE.Vector3(x, y, z);
