@@ -31,7 +31,7 @@ let effect = new OutlineEffect( renderer );
 
 // Init 
 loadEnvironment(scene, world)
-player.init();
+await player.init();
 scene.add(player.forceDebug);
 scene.add(player.mesh);
 world.addBody(player.body);

@@ -1,36 +1,38 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
+import  { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
+const loader = new GLTFLoader();
 export let player = {
-    mesh: new THREE.Mesh(),
+    mesh: new THREE.Mesh(), // init so i can get parameter hints
     body: new CANNON.Body(),
     physicsMaterial: new CANNON.Material(),
     redirectAmount: 0.1,
     forceDebug: new THREE.ArrowHelper(),
-    init: function () {
-        this.mesh = new THREE.Mesh(
-            new THREE.BoxGeometry,
-            new THREE.MeshStandardMaterial({ color: 0xffffff })
-        );
-        this.body = new CANNON.Body({
-            shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
-            mass: 1,
-            position: new CANNON.Vec3(0, 1, 2),
-            material: new CANNON.Material({
-                friction: 0
-            })
-        });
-        this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
-        this.forceDebug = new THREE.ArrowHelper(
-            new THREE.Vector3(0,0,0),
-            new THREE.Vector3(10, 10, 10),
-            3,
-            0xffff00
-            );
+    init: async function () {
+        const gltf = await loader.loadAsync('assets/models/raceFuture.glb')
+            this.mesh = gltf.scene;
+            this.body = new CANNON.Body({
+                shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
+                mass: 1,
+                position: new CANNON.Vec3(0, 1, 2),
+                material: new CANNON.Material({
+                    friction: 0
+                })
+            });
+            this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
+            this.forceDebug = new THREE.ArrowHelper(
+                new THREE.Vector3(0,0,0),
+                new THREE.Vector3(10, 10, 10),
+                3,
+                0xffff00
+                );
     },
     update: function () {
         this.mesh.position.copy(this.body.position);
-        this.mesh.quaternion.copy(this.body.quaternion);
+        const quaternion = new CANNON.Quaternion();
+        quaternion.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI);
+        this.mesh.quaternion.copy(this.body.quaternion.mult(quaternion)); // model has forward as -Z but three js has forward as +Z. I HATE
     },
     getRelativeVector: function (x, y, z) {
         const vec = new THREE.Vector3(x, y, z);
