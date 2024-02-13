@@ -5,8 +5,7 @@ import { c } from './controls.js';
 import {player} from './player.js'
 import loadEnvironment from './environment.js';
 import updateHUD from './hud.js';
-
-
+import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
 // Setup
 const scene = new THREE.Scene();
 const world = new CANNON.World({
@@ -24,10 +23,11 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // Set up the renderer
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.shadowMap.enabled = true; // Enable shadows
 document.getElementById('game-container').appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
+let effect = new OutlineEffect( renderer );
 
 // Init 
 loadEnvironment(scene, world)
@@ -43,7 +43,7 @@ function animate() {
   updateHUD();
   requestAnimationFrame(animate);
   world.step(dt);
-  cannonDebugger.update();
+  // cannonDebugger.update();
   
 
   player.controlPlayer(c, dt);
@@ -57,7 +57,7 @@ function animate() {
   cameraForward.lerp(motionDir.multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0)), 0.1);
   camera.position.copy(player.mesh.position.clone().add(cameraForward));
   camera.lookAt(player.mesh.position);
-  renderer.render(scene, camera);
+  effect.render(scene, camera);
 }
 
 // Handle window resize
