@@ -21,7 +21,7 @@ export let player = {
             })
         });
         this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
-        this.body.angularDamping = 0.9;
+        this.body.angularDamping = 0.8;
         this.forceDebug = new THREE.ArrowHelper(
             new THREE.Vector3(0,0,0),
             new THREE.Vector3(10, 10, 10),
@@ -52,8 +52,8 @@ export let player = {
         // angular velocity control
         const torque =
             this.getRelativeVector(0, 1, 0)
-                .multiplyScalar(1* (c.KeyA - c.KeyD));;
-        this.body.angularVelocity.lerp(torque, 0.4, this.body.angularVelocity);
+                .multiplyScalar(2* (c.KeyA - c.KeyD));;
+        this.body.angularVelocity.lerp(torque, 0.1, this.body.angularVelocity);
 
         // linear velocity control
         const controlForce = this.getForward().multiplyScalar(15 * (c.KeyW - c.KeyS));
