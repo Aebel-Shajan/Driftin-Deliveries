@@ -56,7 +56,7 @@ function createFloorObject(scene, world) {
     const plane = {
         mesh: new THREE.Mesh(
             new THREE.PlaneGeometry(1000, 1000),
-            new THREE.MeshStandardMaterial({ color: 0xF9F9E0 })
+            new THREE.MeshStandardMaterial( {roughness: 0.9, color: 0xaaaaaa })
         ),
         body: new CANNON.Body(
             {
@@ -79,8 +79,8 @@ function createFloorObject(scene, world) {
 function createCubeObject(scale) {
     const cube = {
         mesh: new THREE.Mesh(
-            new THREE.BoxGeometry(scale.x, scale.y, scale.z),
-            new THREE.MeshBasicMaterial()
+            new THREE.BoxGeometry(0.99*scale.x, scale.y, 0.99*scale.z),
+            new THREE.MeshStandardMaterial()
         ),
         body: new CANNON.Body({
             shape: new CANNON.Box(scale.multiplyScalar(0.5)),
@@ -95,6 +95,7 @@ function createCubeObject(scale) {
         }
         
     }
+    
     return cube;
 }
 
