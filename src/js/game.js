@@ -4,6 +4,7 @@ import CannonDebugger from 'cannon-es-debugger';
 import { c } from './controls.js';
 import {player} from './player.js'
 import loadEnvironment from './environment.js';
+import updateHUD from './hud.js';
 
 
 // Setup
@@ -39,6 +40,7 @@ const dt = 1/ 60;
 
 // Animation loop
 function animate() {
+  updateHUD();
   requestAnimationFrame(animate);
   world.step(dt);
   cannonDebugger.update();
