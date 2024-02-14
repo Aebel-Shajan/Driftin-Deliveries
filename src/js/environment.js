@@ -101,13 +101,15 @@ function createCubeObject(scale) {
 
 function setupLighting(scene) {
     // Create directional light
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(100, 100, 100);
-    light.castShadow = true; // Enable shadows for light
+    const light1 = new THREE.DirectionalLight(0xffffff, 4);
+    light1.position.set(100, 100, 100);
+    const light2 = new THREE.DirectionalLight(0xffffff, 4);
+    light2.position.set(-100, 100, -100);
 
-    scene.add(light);
+    scene.add(light1);
+    scene.add(light2);
     // Add ambient light
-    scene.add(new THREE.AmbientLight(0xffffff));
+    scene.add(new THREE.AmbientLight(0xffffff, 0));
 }
 
 function setupBackground(scene) {

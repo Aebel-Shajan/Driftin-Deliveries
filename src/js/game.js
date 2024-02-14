@@ -27,6 +27,8 @@ const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.shadowMap.enabled = true; // Enable shadows
 document.getElementById('game-container').appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+renderer.gammaOutput = true;
 let effect = new OutlineEffect( renderer );
 
 // Init 
