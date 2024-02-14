@@ -10,7 +10,7 @@ export let player = {
     redirectAmount: 0.1,
     forceDebug: new THREE.ArrowHelper(),
     init: async function () {
-        const gltf = await loader.loadAsync('assets/models/raceFuture.glb')
+        const gltf = await loader.loadAsync('assets/models/sedan.glb')
             this.mesh = gltf.scene;
             this.body = new CANNON.Body({
                 shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 1)),
