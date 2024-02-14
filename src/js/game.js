@@ -45,7 +45,11 @@ document.getElementById('game-container').appendChild(renderer.domElement);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.gammaOutput = true;
-let effect = new OutlineEffect( renderer );
+let effect = new OutlineEffect( renderer, {
+  edgeStrength: 10.0
+} );
+effect.blur = true;
+
 
 // Init 
 loadEnvironment(scene, world)
