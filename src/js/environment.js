@@ -1,14 +1,18 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
+import  { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import * as UTILS from './utils.js';
+const loaderGLTF = new GLTFLoader();
 
 export default function loadEnvironment(scene, world) {
     createFloorObject(scene, world);
     createCity(scene, world);
     setupBackground(scene);
     setupLighting(scene);
+    createBuildingObject("helllo");
 }
 
-function createCity(scene, world) {
+async function createCity(scene, world) {
     const city = {
         citySize: 6,
         blockSize: 4,
@@ -26,13 +30,13 @@ function createCity(scene, world) {
                 for (let buildingZ = 0; buildingZ < city.blockSize; buildingZ++) {
                     const buildingOffset = new THREE.Vector3(1, 0, 1).multiplyScalar(city.buildingLength);
                     const buildingPos = blockStartPos.clone().add(buildingOffset)
-                    const buildingHeight = getRandomInt(5, 3 * city.buildingLength);
+                    const buildingHeight = getRandomInt(1* city.buildingLength, 3 * city.buildingLength);
                     buildingPos.add(new THREE.Vector3(city.buildingLength * buildingX, 0, city.buildingLength * buildingZ));
                     buildingPos.add(new THREE.Vector3(0, 0.5 * buildingHeight, 0));
 
-                    let building = createCubeObject(new THREE.Vector3(city.buildingLength, buildingHeight, city.buildingLength));
+                    let building = await createBuildingObject(new THREE.Vector3(city.buildingLength, buildingHeight, city.buildingLength));
                     const randomColor = city.buildingColors[Math.floor(Math.random() * city.buildingColors.length)];
-                    building.mesh.material.color.setHex(randomColor)
+                    // building.mesh.material.color.setHex(randomColor)
                     building.body.position.copy(buildingPos);
                     building.update();
                     scene.add(building.mesh);
@@ -97,6 +101,13 @@ function createCubeObject(scale) {
     }
     
     return cube;
+}
+
+async function createBuildingObject(size) {
+    let buildingMesh = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
+    const buildingObject = UTILS.createObjectFromMesh(buildingMesh.scene);
+    buildingObject.setSize(size);
+    return buildingObject;
 }
 
 function setupLighting(scene) {
