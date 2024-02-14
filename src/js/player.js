@@ -28,6 +28,12 @@ export let player = {
                 0xffff00
                 );
     },
+    getVelocity: function() {
+        return new THREE.Vector3().copy(this.body.velocity);
+    },
+    getPosition: function() {
+        return new THREE.Vector3().copy(this.body.position);
+    },
     update: function () {
         const positionOffset = new CANNON.Vec3(0, -0.5, 0);
         // model has forward as -Z but three js has forward as +Z. I HATE
