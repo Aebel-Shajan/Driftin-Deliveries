@@ -42,13 +42,12 @@ async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world
             {color: 0x999999}
             )
     )
-    const pavementObject = UTILS.createObjectFromMesh(pavementMesh);
-    pavementObject.setPosition(
+    pavementMesh.position.copy(
         blockStartPos
         .clone()
         .add(new THREE.Vector3(1,0,1).multiplyScalar(0.5*buildingWidth*blockSize))
         );
-    pavementObject.addObjectTo(scene, world);
+    scene.add(pavementMesh);
 
     for (let buildingX = 0; buildingX < blockSize; buildingX++) {
         for (let buildingZ = 0; buildingZ < blockSize; buildingZ++) {
