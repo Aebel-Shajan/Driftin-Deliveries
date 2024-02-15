@@ -32,16 +32,16 @@ async function createCity(scene, world) {
 async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world) {
     for (let buildingX = 0; buildingX < blockSize; buildingX++) {
         for (let buildingZ = 0; buildingZ < blockSize; buildingZ++) {
-            const buildingOffset = new THREE.Vector3(1, 0, 1).multiplyScalar(buildingWidth);
-            const buildingPos = blockStartPos.clone().add(buildingOffset)
-            buildingPos.add(new THREE.Vector3(buildingWidth * buildingX, 0, buildingWidth * buildingZ));
-            let building = await createBuildingObject(new THREE.Vector3(1, 0, 1).multiplyScalar(0.9*buildingWidth));
-            buildingPos.y = 0.5*building.getSize().y;
-            building.body.position.copy(buildingPos);
-            building.update();
-            
-            scene.add(building.mesh);
-            world.addBody(building.body)
+            const buildingOffset = new THREE.Vector3(1, 0, 1)
+            .multiplyScalar(buildingWidth);
+            const buildingPos = blockStartPos
+            .clone()
+            .add(buildingOffset)
+            .add(new THREE.Vector3(buildingWidth * buildingX, 0, buildingWidth * buildingZ));
+            let building = await createBuildingObject(new THREE.Vector3(1, 0, 1)
+            .multiplyScalar(0.9*buildingWidth));
+            building.setPosition(buildingPos);
+            building.addObjectTo(scene, world);
         }
     }
 }
