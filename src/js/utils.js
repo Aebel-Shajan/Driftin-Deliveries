@@ -19,7 +19,8 @@ export function createObjectFromMesh(mesh) {
     centredMesh.add(mroot);
     centredMesh.position.set(0,0,0);
     //Reposition to 0,halfY,0
-     mroot.position.copy(cent).multiplyScalar(-1);
+    mroot.position.copy(cent).multiplyScalar(-1);
+    mroot.position.y += 0.5 * originalSize.y;
 
     const object = {
         mesh: centredMesh,
@@ -59,6 +60,10 @@ export function createObjectFromMesh(mesh) {
         rotateAroundAxis: function(axis, angle) {
             this.body.quaternion.setFromAxisAngle(axis, angle);
             this.update();
+        },
+        addObjectTo: function(scene,  world) {
+            scene.add(this.mesh);
+            world.addBody(this.body);
         }
     }
 
