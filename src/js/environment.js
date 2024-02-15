@@ -13,10 +13,10 @@ export default function loadEnvironment(scene, world) {
 
 async function createCity(scene, world) {
     const city = {
-        citySize: 6,
+        citySize: 4,
         blockSize: 4,
-        buildingLength: 20,
-        roadWidth: 30,
+        buildingLength: 15,
+        roadWidth: 25,
     }
 
     for (let blockX = 0; blockX < city.citySize; blockX++) {
@@ -101,8 +101,7 @@ async function createBuildingObject(size) {
     let buildingMesh = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
     const buildingObject = UTILS.createObjectFromMesh(buildingMesh.scene);
     const originalSize = buildingObject.originalSize;
-    const minScale = Math.min(size.x/originalSize.x, size.z/originalSize.z);
-    size.y = originalSize.y * minScale;
+    size.y =  buildingObject.originalSize.y * size.x;
     buildingObject.setSize(size);
     return buildingObject;
 }
