@@ -12,32 +12,24 @@ export function createObjectFromMesh(mesh) {
     var mroot = mesh;
     var bbox = new THREE.Box3().setFromObject(mroot);
     var cent = bbox.getCenter(new THREE.Vector3());
-    var size = bbox.getSize(new THREE.Vector3());
-
-    //Rescale the object to normalized space
-    var maxAxis = Math.max(size.x, size.y, size.z);
-    mroot.scale.multiplyScalar(1.0 / maxAxis);
-    bbox.setFromObject(mroot);
-    bbox.getCenter(cent);
-    bbox.getSize(size);
+    var originalSize = bbox.getSize(new THREE.Vector3());
 
     const centredMesh = new THREE.Object3D();
     centredMesh.add(mroot);
     centredMesh.position.set(0,0,0);
     //Reposition to 0,halfY,0
      mroot.position.copy(cent).multiplyScalar(-1);
-    // mroot.position.y-= (size.y * 0.5);
 
     const object = {
         mesh: centredMesh,
         body: new CANNON.Body({
-            shape: new CANNON.Box(size.clone().multiplyScalar(0.5)),
+            shape: new CANNON.Box(originalSize.clone().multiplyScalar(0.5)),
             type: CANNON.Body.STATIC,
             material: new CANNON.Material({
                 friction: 0.5
             })
         }),
-        originalSize: size,
+        originalSize: originalSize,
         update: function() {
             this.mesh.position.copy(this.body.position);
             this.mesh.quaternion.copy(this.body.quaternion);
