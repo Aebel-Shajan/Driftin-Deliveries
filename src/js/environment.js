@@ -101,7 +101,7 @@ async function createBuildingObject(size) {
     let buildingMesh = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
     const buildingObject = UTILS.createObjectFromMesh(buildingMesh.scene);
     const originalSize = buildingObject.originalSize;
-    size.y =  buildingObject.originalSize.y * size.x;
+    size.y =  buildingObject.originalSize.y * size.x * 0.7;
     buildingObject.setSize(size);
     return buildingObject;
 }
