@@ -35,7 +35,20 @@ async function createCity(scene, world) {
 }
 
 async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world) {
- 
+    const pavementSize = buildingWidth*blockSize + 8;
+    const pavementMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(pavementSize, 0.3, pavementSize),
+        new THREE.MeshBasicMaterial(
+            {color: 0x999999}
+            )
+    )
+    const pavementObject = UTILS.createObjectFromMesh(pavementMesh);
+    pavementObject.setPosition(
+        blockStartPos
+        .clone()
+        .add(new THREE.Vector3(1,0,1).multiplyScalar(0.5*buildingWidth*blockSize))
+        );
+    pavementObject.addObjectTo(scene, world);
 
     for (let buildingX = 0; buildingX < blockSize; buildingX++) {
         for (let buildingZ = 0; buildingZ < blockSize; buildingZ++) {
