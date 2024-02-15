@@ -23,23 +23,30 @@ async function createCity(scene, world) {
         for (let blockZ = 0; blockZ < city.citySize; blockZ++) {
             const blockPlusRoad = (city.blockSize * city.buildingWidth) + city.roadWidth;
             const blockStartPos = new THREE.Vector3(blockPlusRoad * blockX, 0, blockPlusRoad * blockZ);
-            blockStartPos.add(new THREE.Vector3(1, 0, 1).multiplyScalar(blockPlusRoad * city.citySize * -0.5))
+            blockStartPos
+            .add(
+                new THREE.Vector3(1, 0, 1)
+                .multiplyScalar(blockPlusRoad * city.citySize * -0.5)
+                )
+            
             await createBlock(city.buildingWidth, city.blockSize, blockStartPos, scene, world);
         }
     }
 }
 
 async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world) {
+ 
+
     for (let buildingX = 0; buildingX < blockSize; buildingX++) {
         for (let buildingZ = 0; buildingZ < blockSize; buildingZ++) {
-            const buildingOffset = new THREE.Vector3(1, 0, 1)
-            .multiplyScalar(buildingWidth);
             const buildingPos = blockStartPos
             .clone()
-            .add(buildingOffset)
-            .add(new THREE.Vector3(buildingWidth * buildingX, 0, buildingWidth * buildingZ));
+            .add(new THREE.Vector3(1, 0, 1).multiplyScalar(0.5*buildingWidth)) // buildings placed from centre
+            .add(new THREE.Vector3(buildingWidth * buildingX, 0, buildingWidth * buildingZ))
+            ;
             let building = await createBuildingObject(new THREE.Vector3(1, 0, 1)
-            .multiplyScalar(0.9*buildingWidth));
+            .multiplyScalar(buildingWidth));
+            buildingPos.y += 0.5*building.getSize().y;// lift object up based on height
             building.setPosition(buildingPos);
             building.addObjectTo(scene, world);
             let rotateAmount = 0;
