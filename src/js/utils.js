@@ -31,12 +31,13 @@ export function createObjectFromMesh(mesh) {
     const object = {
         mesh: centredMesh,
         body: new CANNON.Body({
-            shape: new CANNON.Box(size.multiplyScalar(0.5)),
+            shape: new CANNON.Box(size.clone().multiplyScalar(0.5)),
             type: CANNON.Body.STATIC,
             material: new CANNON.Material({
                 friction: 0.5
             })
         }),
+        originalSize: size,
         update: function() {
             this.mesh.position.copy(this.body.position);
             this.mesh.quaternion.copy(this.body.quaternion);
@@ -46,10 +47,9 @@ export function createObjectFromMesh(mesh) {
             return bbox.getSize(new THREE.Vector3());
         },
         setSize: function(size) {
-            this.mesh.scale.x = size.x / this.getSize().x;
-            this.mesh.scale.y = size.y / this.getSize().y;
-            this.mesh.scale.z = size.z / this.getSize().z;
-            
+            this.mesh.scale.x = size.x / this.originalSize.x;
+            this.mesh.scale.y = size.y / this.originalSize.y;
+            this.mesh.scale.z = size.z / this.originalSize.z;
             
             const shape = this.body.removeShape(this.body.shapes[0]);
             this.body.addShape(new CANNON.Box(size.multiplyScalar(0.5)),)
