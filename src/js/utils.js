@@ -20,7 +20,6 @@ export function createObjectFromMesh(mesh) {
     centredMesh.position.set(0,0,0);
     //Reposition to 0,halfY,0
     mroot.position.copy(cent).multiplyScalar(-1);
-    mroot.position.y += 0.5 * originalSize.y;
 
     const object = {
         mesh: centredMesh,
@@ -49,6 +48,7 @@ export function createObjectFromMesh(mesh) {
             this.body.addShape(new CANNON.Box(size.multiplyScalar(0.5)),)
             this.body.updateBoundingRadius();
             this.body.updateAABB();
+            this.update();
         },
         setPosition: function(pos) {
             this.body.position.copy(pos);
