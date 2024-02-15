@@ -55,8 +55,8 @@ effect.blur = true;
 loadEnvironment(scene, world)
 await player.init();
 scene.add(player.forceDebug);
-scene.add(player.mesh);
-world.addBody(player.body);
+player.setPosition({x: -10, y: 10, z: 0});
+player.addObjectTo(scene, world);
 const dt = 1/ 60;
 
 // Animation loop
