@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
-import  { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as UTILS from './utils.js';
 const loaderGLTF = new GLTFLoader();
 
@@ -24,57 +24,59 @@ async function createCity(scene, world) {
             const blockPlusRoad = (city.blockSize * city.buildingWidth) + city.roadWidth;
             const blockStartPos = new THREE.Vector3(blockPlusRoad * blockX, 0, blockPlusRoad * blockZ);
             blockStartPos
-            .add(
-                new THREE.Vector3(1, 0, 1)
-                .multiplyScalar(blockPlusRoad * city.citySize * -0.5)
+                .add(
+                    new THREE.Vector3(1, 0, 1)
+                        .multiplyScalar(blockPlusRoad * city.citySize * -0.5)
                 )
-            
+
             await createBlock(city.buildingWidth, city.blockSize, blockStartPos, scene, world);
         }
     }
 }
 
 async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world) {
-    const pavementSize = buildingWidth*blockSize + 8;
+    const pavementSize = buildingWidth * blockSize + 8;
     const pavementMesh = new THREE.Mesh(
         new THREE.BoxGeometry(pavementSize, 0.3, pavementSize),
         new THREE.MeshBasicMaterial(
-            {color: 0x999999}
-            )
+            { color: 0x999999 }
+        )
     )
     pavementMesh.position.copy(
         blockStartPos
-        .clone()
-        .add(new THREE.Vector3(1,0,1).multiplyScalar(0.5*buildingWidth*blockSize))
-        );
+            .clone()
+            .add(new THREE.Vector3(1, 0, 1).multiplyScalar(0.5 * buildingWidth * blockSize))
+    );
     scene.add(pavementMesh);
 
     for (let buildingX = 0; buildingX < blockSize; buildingX++) {
         for (let buildingZ = 0; buildingZ < blockSize; buildingZ++) {
-            const buildingPos = blockStartPos
-            .clone()
-            .add(new THREE.Vector3(1, 0, 1).multiplyScalar(0.5*buildingWidth)) // buildings placed from centre
-            .add(new THREE.Vector3(buildingWidth * buildingX, 0, buildingWidth * buildingZ))
-            ;
-            let building = await createBuildingObject(new THREE.Vector3(1, 0, 1)
-            .multiplyScalar(buildingWidth));
-            buildingPos.y += 0.5*building.getSize().y;// lift object up based on height
-            building.setPosition(buildingPos);
-            building.addObjectTo(scene, world);
-            let rotateAmount = 0;
-            if (buildingX == 0){
-                rotateAmount = -0.5 * Math.PI;
+            if (buildingX == 0 || buildingZ == 0 || buildingX == blockSize - 1 || buildingZ == blockSize - 1) {
+                const buildingPos = blockStartPos
+                    .clone()
+                    .add(new THREE.Vector3(1, 0, 1).multiplyScalar(0.5 * buildingWidth)) // buildings placed from centre
+                    .add(new THREE.Vector3(buildingWidth * buildingX, 0, buildingWidth * buildingZ))
+                    ;
+                let building = await createBuildingObject(new THREE.Vector3(1, 0, 1)
+                    .multiplyScalar(buildingWidth));
+                buildingPos.y += 0.5 * building.getSize().y;// lift object up based on height
+                building.setPosition(buildingPos);
+                building.addObjectTo(scene, world);
+                let rotateAmount = 0;
+                if (buildingX == 0) {
+                    rotateAmount = -0.5 * Math.PI;
+                }
+                if (buildingX == blockSize - 1) {
+                    rotateAmount = 0.5 * Math.PI;
+                }
+                if (buildingZ == blockSize - 1) {
+                    rotateAmount = 0;
+                }
+                if (buildingZ == 0) {
+                    rotateAmount = Math.PI;
+                }
+                building.rotateAroundAxis(new CANNON.Vec3(0, 1, 0), rotateAmount);
             }
-            if (buildingX == blockSize - 1) {
-                rotateAmount = 0.5 * Math.PI;
-            }
-            if (buildingZ == blockSize - 1) {
-                rotateAmount = 0;
-            }
-            if (buildingZ == 0) {
-                rotateAmount = Math.PI;
-            }
-            building.rotateAroundAxis(new CANNON.Vec3(0, 1, 0), rotateAmount);
         }
     }
 }
@@ -93,7 +95,7 @@ function createFloorObject(scene, world) {
     const plane = {
         mesh: new THREE.Mesh(
             new THREE.PlaneGeometry(1000, 1000),
-            new THREE.MeshStandardMaterial( {roughness: 0.9, color: 0xaaaaaa })
+            new THREE.MeshStandardMaterial({ roughness: 0.9, color: 0xaaaaaa })
         ),
         body: new CANNON.Body(
             {
@@ -117,7 +119,7 @@ async function createBuildingObject(size) {
     let buildingMesh = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
     const buildingObject = UTILS.createObjectFromMesh(buildingMesh.scene);
     const originalSize = buildingObject.originalSize;
-    size.y =  buildingObject.originalSize.y * size.x * 0.7;
+    size.y = buildingObject.originalSize.y * size.x * 0.7;
     buildingObject.setSize(size);
     return buildingObject;
 }
