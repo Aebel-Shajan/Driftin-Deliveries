@@ -9,6 +9,7 @@ export function getRandomBuilding() {
 }
 
 export function createObjectFromMesh(mesh) {
+    // should really be class, should really use typescript but i cba !!!!!!!
     var mroot = mesh;
     var bbox = new THREE.Box3().setFromObject(mroot);
     var cent = bbox.getCenter(new THREE.Vector3());
@@ -47,6 +48,17 @@ export function createObjectFromMesh(mesh) {
             this.body.addShape(new CANNON.Box(size.multiplyScalar(0.5)),)
             this.body.updateBoundingRadius();
             this.body.updateAABB();
+        },
+        setPosition: function(pos) {
+            this.body.position.copy(pos);
+            this.update();
+        },
+        getPosition: function() {
+            return this.body.position;
+        },
+        rotateAroundAxis: function(axis, angle) {
+            this.body.quaternion.setFromAxisAngle(axis, angle);
+            this.update();
         }
     }
 
