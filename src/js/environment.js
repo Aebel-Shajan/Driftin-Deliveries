@@ -15,31 +15,37 @@ async function createCity(scene, world) {
     const city = {
         citySize: 4,
         blockSize: 4,
-        buildingLength: 15,
+        buildingWidth: 15,
         roadWidth: 25,
     }
 
     for (let blockX = 0; blockX < city.citySize; blockX++) {
         for (let blockZ = 0; blockZ < city.citySize; blockZ++) {
-            const blockPlusRoad = (city.blockSize * city.buildingLength) + city.roadWidth;
+            const blockPlusRoad = (city.blockSize * city.buildingWidth) + city.roadWidth;
             const blockStartPos = new THREE.Vector3(blockPlusRoad * blockX, 0, blockPlusRoad * blockZ);
             blockStartPos.add(new THREE.Vector3(1, 0, 1).multiplyScalar(blockPlusRoad * city.citySize * -0.5))
-            for (let buildingX = 0; buildingX < city.blockSize; buildingX++) {
-                for (let buildingZ = 0; buildingZ < city.blockSize; buildingZ++) {
-                    const buildingOffset = new THREE.Vector3(1, 0, 1).multiplyScalar(city.buildingLength);
-                    const buildingPos = blockStartPos.clone().add(buildingOffset)
-                    buildingPos.add(new THREE.Vector3(city.buildingLength * buildingX, 0, city.buildingLength * buildingZ));
-                    let building = await createBuildingObject(new THREE.Vector3(0.9*city.buildingLength, 1, 0.9*city.buildingLength));
-                    buildingPos.y = 0.5* building.getSize().y;
-                    building.body.position.copy(buildingPos);
-                    building.update();
-                    scene.add(building.mesh);
-                    world.addBody(building.body)
-                }
-            }
+            await createBlock(city.buildingWidth, city.blockSize, blockStartPos, scene, world);
         }
     }
 }
+
+async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world) {
+    for (let buildingX = 0; buildingX < blockSize; buildingX++) {
+        for (let buildingZ = 0; buildingZ < blockSize; buildingZ++) {
+            const buildingOffset = new THREE.Vector3(1, 0, 1).multiplyScalar(buildingWidth);
+            const buildingPos = blockStartPos.clone().add(buildingOffset)
+            buildingPos.add(new THREE.Vector3(buildingWidth * buildingX, 0, buildingWidth * buildingZ));
+            let building = await createBuildingObject(new THREE.Vector3(1, 0, 1).multiplyScalar(0.9*buildingWidth));
+            buildingPos.y = 0.5*building.getSize().y;
+            building.body.position.copy(buildingPos);
+            building.update();
+            
+            scene.add(building.mesh);
+            world.addBody(building.body)
+        }
+    }
+}
+
 
 function createTree() {
     const treeGeometry = new THREE.CylinderGeometry(2, 5, 20, 32);
