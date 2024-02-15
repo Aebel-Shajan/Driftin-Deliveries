@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
-import  { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const loader = new GLTFLoader();
 export let player = {
@@ -22,16 +22,17 @@ export let player = {
         });
         this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
         this.forceDebug = new THREE.ArrowHelper(
-            new THREE.Vector3(0,0,0),
+            new THREE.Vector3(0, 0, 0),
             new THREE.Vector3(10, 10, 10),
             3,
             0xffff00
-            );
+        );
+
     },
-    getVelocity: function() {
+    getVelocity: function () {
         return new THREE.Vector3().copy(this.body.velocity);
     },
-    getPosition: function() {
+    getPosition: function () {
         return new THREE.Vector3().copy(this.body.position);
     },
     update: function () {
@@ -40,7 +41,7 @@ export let player = {
         const quaternionOffset = new CANNON.Quaternion();
         quaternionOffset.setFromAxisAngle(new CANNON.Vec3(0, 1, 0), Math.PI);
         this.mesh.position.copy(this.body.position.vadd(positionOffset));
-        this.mesh.quaternion.copy(this.body.quaternion.mult(quaternionOffset)); 
+        this.mesh.quaternion.copy(this.body.quaternion.mult(quaternionOffset));
     },
     getRelativeVector: function (x, y, z) {
         const vec = new THREE.Vector3(x, y, z);
@@ -57,11 +58,11 @@ export let player = {
     },
     controlPlayer: function (c, dt) {
         this.update();
- 
+
         // angular velocity control
         const torque =
             this.getRelativeVector(0, 1, 0)
-                .multiplyScalar(1.5* (c.KeyA - c.KeyD));
+                .multiplyScalar(1.5 * (c.KeyA - c.KeyD));
         this.body.angularDamping = c.ShiftLeft ? 0.6 : 0.8;
         this.body.angularVelocity.lerp(torque, 0.1, this.body.angularVelocity);
 
