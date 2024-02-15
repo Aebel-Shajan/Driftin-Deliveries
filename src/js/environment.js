@@ -9,7 +9,6 @@ export default function loadEnvironment(scene, world) {
     createCity(scene, world);
     setupBackground(scene);
     setupLighting(scene);
-    createBuildingObject("helllo");
 }
 
 async function createCity(scene, world) {
@@ -18,7 +17,6 @@ async function createCity(scene, world) {
         blockSize: 4,
         buildingLength: 20,
         roadWidth: 30,
-        buildingColors: [0xFF90BC, 0xFFC0D9, 0x8ACDD7]
     }
 
     for (let blockX = 0; blockX < city.citySize; blockX++) {
@@ -30,13 +28,9 @@ async function createCity(scene, world) {
                 for (let buildingZ = 0; buildingZ < city.blockSize; buildingZ++) {
                     const buildingOffset = new THREE.Vector3(1, 0, 1).multiplyScalar(city.buildingLength);
                     const buildingPos = blockStartPos.clone().add(buildingOffset)
-                    const buildingHeight = getRandomInt(1* city.buildingLength, 3 * city.buildingLength);
                     buildingPos.add(new THREE.Vector3(city.buildingLength * buildingX, 0, city.buildingLength * buildingZ));
-                    buildingPos.add(new THREE.Vector3(0, 0.5 * buildingHeight, 0));
-
-                    let building = await createBuildingObject(new THREE.Vector3(city.buildingLength, buildingHeight, city.buildingLength));
-                    const randomColor = city.buildingColors[Math.floor(Math.random() * city.buildingColors.length)];
-                    // building.mesh.material.color.setHex(randomColor)
+                    let building = await createBuildingObject(new THREE.Vector3(0.9*city.buildingLength, 1, 0.9*city.buildingLength));
+                    buildingPos.y = 0.5* building.getSize().y;
                     building.body.position.copy(buildingPos);
                     building.update();
                     scene.add(building.mesh);
@@ -106,6 +100,9 @@ function createCubeObject(scale) {
 async function createBuildingObject(size) {
     let buildingMesh = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
     const buildingObject = UTILS.createObjectFromMesh(buildingMesh.scene);
+    const originalSize = buildingObject.originalSize;
+    const minScale = Math.min(size.x/originalSize.x, size.z/originalSize.z);
+    size.y = originalSize.y * minScale;
     buildingObject.setSize(size);
     return buildingObject;
 }
