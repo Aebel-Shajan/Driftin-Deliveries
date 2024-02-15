@@ -11,22 +11,22 @@ export let player = {
     forceDebug: new THREE.ArrowHelper(),
     init: async function () {
         const gltf = await loader.loadAsync('assets/models/sedan.glb')
-            this.mesh = gltf.scene;
-            this.body = new CANNON.Body({
-                shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 1)),
-                mass: 1,
-                position: new CANNON.Vec3(0, 1, 2),
-                material: new CANNON.Material({
-                    friction: 0
-                })
-            });
-            this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
-            this.forceDebug = new THREE.ArrowHelper(
-                new THREE.Vector3(0,0,0),
-                new THREE.Vector3(10, 10, 10),
-                3,
-                0xffff00
-                );
+        this.mesh = gltf.scene;
+        this.body = new CANNON.Body({
+            shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 1)),
+            mass: 1,
+            position: new CANNON.Vec3(0, 1, 2),
+            material: new CANNON.Material({
+                friction: 0
+            })
+        });
+        this.mesh.position.copy(new THREE.Vector3(0, 1, 0));
+        this.forceDebug = new THREE.ArrowHelper(
+            new THREE.Vector3(0,0,0),
+            new THREE.Vector3(10, 10, 10),
+            3,
+            0xffff00
+            );
     },
     getVelocity: function() {
         return new THREE.Vector3().copy(this.body.velocity);
