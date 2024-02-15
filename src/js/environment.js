@@ -94,29 +94,6 @@ function createFloorObject(scene, world) {
     return plane;
 }
 
-function createCubeObject(scale) {
-    const cube = {
-        mesh: new THREE.Mesh(
-            new THREE.BoxGeometry(0.99*scale.x, scale.y, 0.99*scale.z),
-            new THREE.MeshStandardMaterial()
-        ),
-        body: new CANNON.Body({
-            shape: new CANNON.Box(scale.multiplyScalar(0.5)),
-            type: CANNON.Body.STATIC,
-            material: new CANNON.Material({
-                friction: 0.5
-            })
-        }),
-        update: function() {
-            this.mesh.position.copy(this.body.position);
-            this.mesh.quaternion.copy(this.body.quaternion);
-        }
-        
-    }
-    
-    return cube;
-}
-
 async function createBuildingObject(size) {
     let buildingMesh = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
     const buildingObject = UTILS.createObjectFromMesh(buildingMesh.scene);
