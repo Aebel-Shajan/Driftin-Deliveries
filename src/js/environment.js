@@ -42,6 +42,20 @@ async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world
             .multiplyScalar(0.9*buildingWidth));
             building.setPosition(buildingPos);
             building.addObjectTo(scene, world);
+            let rotateAmount = 0;
+            if (buildingX == 0){
+                rotateAmount = -0.5 * Math.PI;
+            }
+            if (buildingX == blockSize - 1) {
+                rotateAmount = 0.5 * Math.PI;
+            }
+            if (buildingZ == blockSize - 1) {
+                rotateAmount = 0;
+            }
+            if (buildingZ == 0) {
+                rotateAmount = Math.PI;
+            }
+            building.rotateAroundAxis(new CANNON.Vec3(0, 1, 0), rotateAmount);
         }
     }
 }
