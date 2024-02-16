@@ -56,22 +56,22 @@ effect.blur = true;
 
 // Init 
 loadEnvironment(scene, world)
-await player.init();
+player.init();
 scene.add(player.forceDebug);
 player.setPosition({x: -10, y: 10, z: 0});
 player.addObjectTo(scene, world);
-const dt = 1/ 60;
+var clock = new THREE.Clock();
 
 // Animation loop
 function animate() {
   stats.begin();
+  let dt = clock.getDelta();
   updateHUD();
   requestAnimationFrame(animate);
   world.step(dt);
   // cannonDebugger.update();
-  
 
-  player.controlPlayer(c, dt);
+  player.controlPlayer(c);
 
   // camera 
   updateCamera(player);
