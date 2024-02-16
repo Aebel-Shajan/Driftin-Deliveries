@@ -25,7 +25,7 @@ export const player = {
         this.body = new CANNON.Body({
             shape: new CANNON.Box(this.originalSize.clone().multiplyScalar(0.5)),
             mass: 1,
-            position: new CANNON.Vec3(0, 1, 2),
+            position: new CANNON.Vec3(0, 1, 0),
             material: new CANNON.Material({
                 friction: 0
             })
@@ -78,11 +78,16 @@ export const player = {
         const redirectAmount = c.ShiftLeft ? 0.6 : 4;
         const centripetalForce = this.getSideward().multiplyScalar(-1 * redirectAmount * perpendicularVel);
         this.body.applyForce(centripetalForce);
-
+        this.body.applyForce(vector.set(0, c.Space *  30, 0));
         // force debug
         this.forceDebug.position.copy(this.getPosition().add(vector.set(0, 2, 0)));
         this.forceDebug.setDirection(this.getVelocity());
         this.forceDebug.setLength(3);
+    },
+    isCollidingWith: function(object) {
+        this.body.updateAABB();
+        object.body.updateAABB();
+        return this.body.aabb.overlaps(object.body.aabb);
     }
 }
 
