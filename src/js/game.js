@@ -1,12 +1,16 @@
 import * as THREE from 'three';
-import * as CANNON from 'cannon-es';
+import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 import { c } from './controls.js';
 import {player} from './player.js'
 import loadEnvironment from './environment.js';
 import updateHUD from './hud.js';
-import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
+import { foodObject } from './foodDelivery.js';
+
+const tempVec = new THREE.Vector3();
+
 // Setup
 const scene = new THREE.Scene();
 const world = new CANNON.World({
@@ -64,9 +68,12 @@ const city = {
 loadEnvironment(city, scene, world)
 player.init();
 scene.add(player.forceDebug);
-player.setPosition({x: -10, y: 10, z: 0});
+player.setPosition({x: 0, y: 10, z: 0});
 player.addObjectTo(scene, world);
 var clock = new THREE.Clock();
+foodObject.addObjectTo(scene, world);
+foodObject.setPosition(tempVec.set(0, 1, 0));
+
 
 // Animation loop
 function animate() {
@@ -75,7 +82,7 @@ function animate() {
   updateHUD();
   requestAnimationFrame(animate);
   world.step(dt);
-  // cannonDebugger.update();
+  cannonDebugger.update();
 
   player.controlPlayer(c);
 
