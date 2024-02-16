@@ -18,7 +18,6 @@ export function createObjectFromMesh(mesh) {
     const centredMesh = new THREE.Object3D();
     centredMesh.add(mroot);
     centredMesh.position.set(0,0,0);
-    //Reposition to 0,halfY,0
     mroot.position.copy(cent).multiplyScalar(-1);
 
     const object = {
@@ -31,6 +30,7 @@ export function createObjectFromMesh(mesh) {
             })
         }),
         originalSize: originalSize,
+        scale: new THREE.Vector3(1, 1, 1),
         update: function() {
             this.mesh.position.copy(this.body.position);
             this.mesh.quaternion.copy(this.body.quaternion);
@@ -40,12 +40,20 @@ export function createObjectFromMesh(mesh) {
             return bbox.getSize(new THREE.Vector3());
         },
         setSize: function(size) {
-            this.mesh.scale.x = size.x / this.originalSize.x;
-            this.mesh.scale.y = size.y / this.originalSize.y;
-            this.mesh.scale.z = size.z / this.originalSize.z;
-            
-            const shape = this.body.removeShape(this.body.shapes[0]);
-            this.body.addShape(new CANNON.Box(size.multiplyScalar(0.5)),)
+            this.setScale(new THREE.Vector3(
+            size.x / this.originalSize.x,
+            size.y / this.originalSize.y,
+            size.z / this.originalSize.z));
+            this.update();
+        },
+        getScale: function() {
+            return this.scale;
+        },
+        setScale: function(scale) {
+            this.scale.copy(scale);
+            this.mesh.scale.copy(scale);
+            this.body.removeShape(this.body.shapes[0]);
+            this.body.addShape(new CANNON.Box(this.getSize().multiplyScalar(0.5)),)
             this.body.updateBoundingRadius();
             this.body.updateAABB();
             this.update();
