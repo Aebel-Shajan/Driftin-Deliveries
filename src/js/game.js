@@ -14,7 +14,7 @@ const world = new CANNON.World({
 });
 const cannonDebugger = new CannonDebugger(scene, world, {})
 const stats = Stats();
-stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+stats.showPanel(  0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild( stats.dom );
 
 // Camera
@@ -55,7 +55,13 @@ effect.blur = true;
 
 
 // Init 
-loadEnvironment(scene, world)
+const city = {
+  citySize: 4,
+  blockSize: 4,
+  buildingWidth: 15,
+  roadWidth: 25,
+}
+loadEnvironment(city, scene, world)
 player.init();
 scene.add(player.forceDebug);
 player.setPosition({x: -10, y: 10, z: 0});

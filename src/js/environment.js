@@ -5,21 +5,14 @@ import * as UTILS from './utils.js';
 const loaderGLTF = new GLTFLoader();
 const vector = new THREE.Vector3();
 
-export default function loadEnvironment(scene, world) {
+export default function loadEnvironment(city, scene, world) {
     createFloorObject(scene, world);
-    createCity(scene, world);
+    createCity(city, scene, world);
     setupBackground(scene);
     setupLighting(scene);
 }
 
-async function createCity(scene, world) {
-    const city = {
-        citySize: 4,
-        blockSize: 4,
-        buildingWidth: 15,
-        roadWidth: 25,
-    }
-
+async function createCity(city, scene, world) {
     for (let blockX = 0; blockX < city.citySize; blockX++) {
         for (let blockZ = 0; blockZ < city.citySize; blockZ++) {
             const blockPlusRoad = (city.blockSize * city.buildingWidth) + city.roadWidth;
