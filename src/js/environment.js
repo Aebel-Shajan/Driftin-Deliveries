@@ -3,6 +3,7 @@ import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as UTILS from './utils.js';
 const loaderGLTF = new GLTFLoader();
+const vector = new THREE.Vector3();
 
 export default function loadEnvironment(scene, world) {
     createFloorObject(scene, world);
@@ -25,7 +26,7 @@ async function createCity(scene, world) {
             const blockStartPos = new THREE.Vector3(blockPlusRoad * blockX, 0, blockPlusRoad * blockZ);
             blockStartPos
                 .add(
-                    new THREE.Vector3(1, 0, 1)
+                    vector.set(1, 0, 1)
                         .multiplyScalar(blockPlusRoad * city.citySize * -0.5)
                 )
 
@@ -45,21 +46,22 @@ async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world
     pavementMesh.position.copy(
         blockStartPos
             .clone()
-            .add(new THREE.Vector3(1, 0, 1).multiplyScalar(0.5 * buildingWidth * blockSize))
+            .add(vector.set(1, 0, 1).multiplyScalar(0.5 * buildingWidth * blockSize))
     );
     scene.add(pavementMesh);
 
     for (let buildingX = 0; buildingX < blockSize; buildingX++) {
         for (let buildingZ = 0; buildingZ < blockSize; buildingZ++) {
             if (buildingX == 0 || buildingZ == 0 || buildingX == blockSize - 1 || buildingZ == blockSize - 1) {
+                let building = await createBuildingObject(
+                    vector.set(1, 0, 1)
+                        .multiplyScalar(buildingWidth)
+                );
                 const buildingPos = blockStartPos
                     .clone()
-                    .add(new THREE.Vector3(1, 0, 1).multiplyScalar(0.5 * buildingWidth)) // buildings placed from centre
-                    .add(new THREE.Vector3(buildingWidth * buildingX, 0, buildingWidth * buildingZ))
-                    ;
-                let building = await createBuildingObject(new THREE.Vector3(1, 0, 1)
-                    .multiplyScalar(buildingWidth));
-                buildingPos.y += 0.5 * building.getSize().y;// lift object up based on height
+                    .add(vector.set(1, 0, 1).multiplyScalar(0.5 * buildingWidth)) // buildings placed from centre
+                    .add(vector.set(buildingWidth * buildingX, 0, buildingWidth * buildingZ))
+                    .add(vector.set(0, 0.5 * building.getSize().y, 0));
                 building.setPosition(buildingPos);
                 building.addObjectTo(scene, world);
                 let rotateAmount = 0;
@@ -75,7 +77,7 @@ async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world
                 if (buildingZ == 0) {
                     rotateAmount = Math.PI;
                 }
-                building.rotateAroundAxis(new CANNON.Vec3(0, 1, 0), rotateAmount);
+                building.rotateAroundAxis(vector.set(0, 1, 0), rotateAmount);
             }
         }
     }
