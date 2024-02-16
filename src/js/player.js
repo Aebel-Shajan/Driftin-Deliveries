@@ -59,7 +59,7 @@ export const player = {
     getUpward: function () {
         return this.upward.set(0, 1, 0).applyQuaternion(this.body.quaternion);
     },
-    controlPlayer: function (c, dt) {
+    controlPlayer: function (c) {
         this.update();
 
         // angular velocity control
