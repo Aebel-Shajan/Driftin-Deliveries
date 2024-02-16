@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 import CannonDebugger from 'cannon-es-debugger';
 import { c } from './controls.js';
 import {player} from './player.js'
@@ -12,7 +13,9 @@ const world = new CANNON.World({
     gravity: new CANNON.Vec3(0, -9.81, 0)
 });
 const cannonDebugger = new CannonDebugger(scene, world, {})
-
+const stats = Stats();
+stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );
 
 // Camera
 const camera = new THREE.PerspectiveCamera(
@@ -61,6 +64,7 @@ const dt = 1/ 60;
 
 // Animation loop
 function animate() {
+  stats.begin();
   updateHUD();
   requestAnimationFrame(animate);
   world.step(dt);
@@ -72,6 +76,7 @@ function animate() {
   // camera 
   updateCamera(player);
   effect.render(scene, camera);
+  stats.end();
 }
 
 // Handle window resize
