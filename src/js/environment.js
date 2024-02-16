@@ -3,7 +3,7 @@ import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as UTILS from './utils.js';
 const loaderGLTF = new GLTFLoader();
-const vector = new THREE.Vector3();
+const tempVec = new THREE.Vector3();
 
 export default function loadEnvironment(city, scene, world) {
     createFloorObject(scene, world);
@@ -12,68 +12,76 @@ export default function loadEnvironment(city, scene, world) {
     setupLighting(scene);
 }
 
+function getCityBlockPos(city, blockCoords) {
+    const blockPlusRoad = (city.blockSize * city.buildingWidth) + city.roadWidth;
+    const cityCornerPos = new THREE.Vector3(1, 0, 1)
+        .multiplyScalar(blockPlusRoad * city.citySize * -0.5);
+    const blockCentrePos = cityCornerPos
+        .add(
+            tempVec.set(0.5 + blockCoords.x, 0, 0.5 + blockCoords.z)
+            .multiplyScalar(blockPlusRoad)
+            );
+    return blockCentrePos;
+}
+
+function getCityBuildingPos(city, blockCoords, buildingCoords) {
+    const blockCentrePos = getCityBlockPos(city, blockCoords);
+    const blockCornerPos = blockCentrePos
+        .add(
+            tempVec.set(1, 0, 1)
+            .multiplyScalar(-0.5 * city.blockSize * city.buildingWidth)
+            );
+    const buildingCentrePos = blockCornerPos
+        .add(
+            tempVec.set(0.5 + buildingCoords.x, 0, 0.5 + buildingCoords.z)
+            .multiplyScalar(city.buildingWidth)
+            );        
+    return buildingCentrePos;
+}
+
 async function createCity(city, scene, world) {
     for (let blockX = 0; blockX < city.citySize; blockX++) {
         for (let blockZ = 0; blockZ < city.citySize; blockZ++) {
-            const blockPlusRoad = (city.blockSize * city.buildingWidth) + city.roadWidth;
-            const blockStartPos = new THREE.Vector3(blockPlusRoad * blockX, 0, blockPlusRoad * blockZ);
-            blockStartPos
-                .add(
-                    vector.set(1, 0, 1)
-                        .multiplyScalar(blockPlusRoad * city.citySize * -0.5)
-                )
-
-            await createBlock(city.buildingWidth, city.blockSize, blockStartPos, scene, world);
+            const blockPavement = createPavementMesh(city, { x: blockX, z: blockZ });
+            scene.add(blockPavement);
+            for (let buildingX = 0; buildingX < city.blockSize; buildingX++) {
+                const addAmount = buildingX % (city.blockSize - 1) ? (city.blockSize - 1) : 1 // dont loop through inner buildings
+                for (let buildingZ = 0; buildingZ < city.blockSize; buildingZ += addAmount) {
+                    const buildingPos = getCityBuildingPos(city, { x: blockX, z: blockZ }, { x: buildingX, z: buildingZ });
+                    const buildingSize = tempVec.set(1, 0, 1).multiplyScalar(city.buildingWidth);
+                    let building = await createBuildingObject(buildingSize);
+                    building.setBottomPosition(buildingPos);
+                    building.addObjectTo(scene, world);
+                    let rotateAmount = 0;
+                    if (buildingX == 0) {
+                        rotateAmount = -0.5 * Math.PI;
+                    }
+                    if (buildingX == city.blockSize - 1) {
+                        rotateAmount = 0.5 * Math.PI;
+                    }
+                    if (buildingZ == city.blockSize - 1) {
+                        rotateAmount = 0;
+                    }
+                    if (buildingZ == 0) {
+                        rotateAmount = Math.PI;
+                    }
+                    building.rotateAroundAxis(tempVec.set(0, 1, 0), rotateAmount);
+                }
+            }
         }
     }
 }
 
-async function createBlock(buildingWidth, blockSize, blockStartPos, scene, world) {
-    const pavementSize = buildingWidth * blockSize + 8;
+function createPavementMesh(city, blockCoords) {
+    const pavementSize = city.buildingWidth * city.blockSize + 8;
     const pavementMesh = new THREE.Mesh(
         new THREE.BoxGeometry(pavementSize, 0.3, pavementSize),
         new THREE.MeshBasicMaterial(
             { color: 0x999999 }
         )
     )
-    pavementMesh.position.copy(
-        blockStartPos
-            .clone()
-            .add(vector.set(1, 0, 1).multiplyScalar(0.5 * buildingWidth * blockSize))
-    );
-    scene.add(pavementMesh);
-
-    for (let buildingX = 0; buildingX < blockSize; buildingX++) {
-        for (let buildingZ = 0; buildingZ < blockSize; buildingZ++) {
-            if (buildingX == 0 || buildingZ == 0 || buildingX == blockSize - 1 || buildingZ == blockSize - 1) {
-                let building = await createBuildingObject(
-                    vector.set(1, 0, 1)
-                        .multiplyScalar(buildingWidth)
-                );
-                const buildingPos = blockStartPos
-                    .clone()
-                    .add(vector.set(1, 0, 1).multiplyScalar(0.5 * buildingWidth)) // buildings placed from centre
-                    .add(vector.set(buildingWidth * buildingX, 0, buildingWidth * buildingZ))
-                    .add(vector.set(0, 0.5 * building.getSize().y, 0));
-                building.setPosition(buildingPos);
-                building.addObjectTo(scene, world);
-                let rotateAmount = 0;
-                if (buildingX == 0) {
-                    rotateAmount = -0.5 * Math.PI;
-                }
-                if (buildingX == blockSize - 1) {
-                    rotateAmount = 0.5 * Math.PI;
-                }
-                if (buildingZ == blockSize - 1) {
-                    rotateAmount = 0;
-                }
-                if (buildingZ == 0) {
-                    rotateAmount = Math.PI;
-                }
-                building.rotateAroundAxis(vector.set(0, 1, 0), rotateAmount);
-            }
-        }
-    }
+    pavementMesh.position.copy(getCityBlockPos(city, blockCoords));
+    return pavementMesh;
 }
 
 
@@ -113,7 +121,6 @@ function createFloorObject(scene, world) {
 async function createBuildingObject(size) {
     let buildingMesh = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
     const buildingObject = UTILS.createObjectFromMesh(buildingMesh.scene);
-    const originalSize = buildingObject.originalSize;
     size.y = buildingObject.originalSize.y * size.x * 0.7;
     buildingObject.setSize(size);
     return buildingObject;

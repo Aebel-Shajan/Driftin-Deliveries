@@ -54,6 +54,10 @@ export function createObjectFromMesh(mesh) {
             this.body.position.copy(pos);
             this.update();
         },
+        setBottomPosition: function(pos) {
+            pos.y += 0.5 * this.getSize().y;
+            this.setPosition(pos);
+        },
         getPosition: function() {
             return this.body.position;
         },
@@ -66,6 +70,5 @@ export function createObjectFromMesh(mesh) {
             world.addBody(this.body);
         }
     }
-
     return object;
 }
