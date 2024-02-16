@@ -70,7 +70,7 @@ export function createObjectFromMesh(mesh) {
             return this.body.position;
         },
         rotateAroundAxis: function(axis, angle) {
-            this.body.quaternion.setFromAxisAngle(axis, angle);
+            this.body.quaternion.copy(this.body.quaternion.mult(new CANNON.Quaternion().setFromAxisAngle(axis, angle)));
             this.update();
         },
         addObjectTo: function(scene,  world) {
