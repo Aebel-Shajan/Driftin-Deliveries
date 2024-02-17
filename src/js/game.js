@@ -68,10 +68,9 @@ const city = {
   roadWidth: 25,
 }
 loadEnvironment(city, scene, world)
-player.init();
-scene.add(player.forceDebug);
 player.setPosition({x: 0, y: 10, z: 0});
 player.addObjectTo(scene, world);
+scene.add(player.debug);
 var clock = new THREE.Clock();
 foodObject.addObjectTo(scene, world);
 foodObject.setPosition(tempVec.set(0, 1, 0));
@@ -87,6 +86,8 @@ function animate() {
   cannonDebugger.update();
 
   player.controlPlayer(c);
+  player.updateMesh();
+  player.updateDebug();
   foodObject.body.applyForce(new CANNON.Vec3(0, 9.81*foodObject.body.mass, 0));
   foodObject.updateMesh();
 
