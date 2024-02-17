@@ -2,6 +2,7 @@ import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import * as UTILS from './utils.js';
+import { GameObject } from "./gameObject.js";
 const loaderGLTF = new GLTFLoader();
 const tempVec = new THREE.Vector3();
 
@@ -19,8 +20,8 @@ function getCityBlockPos(city, blockCoords) {
     const blockCentrePos = cityCornerPos
         .add(
             tempVec.set(0.5 + blockCoords.x, 0, 0.5 + blockCoords.z)
-            .multiplyScalar(blockPlusRoad)
-            );
+                .multiplyScalar(blockPlusRoad)
+        );
     return blockCentrePos;
 }
 
@@ -29,13 +30,13 @@ function getCityBuildingPos(city, blockCoords, buildingCoords) {
     const blockCornerPos = blockCentrePos
         .add(
             tempVec.set(1, 0, 1)
-            .multiplyScalar(-0.5 * city.blockSize * city.buildingWidth)
-            );
+                .multiplyScalar(-0.5 * city.blockSize * city.buildingWidth)
+        );
     const buildingCentrePos = blockCornerPos
         .add(
             tempVec.set(0.5 + buildingCoords.x, 0, 0.5 + buildingCoords.z)
-            .multiplyScalar(city.buildingWidth)
-            );        
+                .multiplyScalar(city.buildingWidth)
+        );
     return buildingCentrePos;
 }
 
@@ -51,6 +52,7 @@ async function createCity(city, scene, world) {
                     const buildingSize = tempVec.set(1, 0, 1).multiplyScalar(city.buildingWidth);
                     let building = await createBuildingObject(buildingSize);
                     building.setBottomPosition(buildingPos);
+                    building.updateMesh();
                     building.addObjectTo(scene, world);
                     let rotateAmount = 0;
                     if (buildingX == 0) {
@@ -119,9 +121,17 @@ function createFloorObject(scene, world) {
 }
 
 async function createBuildingObject(size) {
-    let buildingMesh = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
-    const buildingObject = UTILS.createObjectFromMesh(buildingMesh.scene);
-    size.y = buildingObject.originalSize.y * size.x * 0.7;
+    let buildingModel = await loaderGLTF.loadAsync(UTILS.getRandomBuilding());
+    const buildingObject = new GameObject(
+        buildingModel.scene,
+        {
+            type: CANNON.Body.STATIC,
+            material: new CANNON.Material({
+                friction: 0.5
+            })
+        }
+    );
+    size.y = buildingObject.getOriginalSize().y * size.x * 0.7;
     buildingObject.setSize(size);
     return buildingObject;
 }
