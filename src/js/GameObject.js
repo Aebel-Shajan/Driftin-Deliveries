@@ -69,7 +69,8 @@ class GameObject {
 
     getSize() {
         var bbox = new THREE.Box3().setFromObject(this.mesh);
-        return bbox.getSize(this.#size);
+        bbox.getSize(this.#size)
+        return this.#size;
     }
 
     setSize(size) {
@@ -88,7 +89,7 @@ class GameObject {
         this.#scale.copy(scale);
         this.mesh.scale.copy(scale);
         this.body.removeShape(this.body.shapes[0]);
-        this.body.addShape(new CANNON.Box(this.getSize().multiplyScalar(0.5)));
+        this.body.addShape(new CANNON.Box(this.getSize().clone().multiplyScalar(0.5)));
         this.body.updateBoundingRadius();
         this.body.updateAABB();
     }
@@ -101,7 +102,7 @@ class GameObject {
     }
     
     rotateAroundAxis(axis, angle) {
-        const newQuaternion = this.getQuaternion().mult(new CANNON.Quaternion().setFromAxisAngle(axis, angle));
+        const newQuaternion = this.getQuaternion().multiply(new THREE.Quaternion().setFromAxisAngle(axis, angle));
         this.setQuaternion(newQuaternion);
     }
 
