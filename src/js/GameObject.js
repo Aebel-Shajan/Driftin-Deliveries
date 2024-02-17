@@ -2,19 +2,25 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 
 class GameObject {
+    #originalSize = new THREE.Vector3();
+    #size = new THREE.Vector3();
+    #scale = new THREE.Vector3();
+    #position = new THREE.Vector3();
+    #velocity = new THREE.Vector3();
+    #quaternion = new THREE.Quaternion();
     constructor(mesh, bodyParams) {
         let boundingBox = new THREE.Box3().setFromObject(mesh);
         let centrePos = boundingBox.getCenter(new THREE.Vector3());
-        this.originalSize = boundingBox.getSize(new THREE.Vector3());
+        this.#originalSize = boundingBox.getSize(new THREE.Vector3());
+        this.#size.copy(this.#originalSize);
+        this.#scale.set(1,1,1);
         this.mesh = new THREE.Object3D();
         this.mesh.add(mesh);
         this.body = new CANNON.Body({
-            shape: new CANNON.Box(this.originalSize.clone().multiplyScalar(0.5)),
+            shape: new CANNON.Box(this.#originalSize.clone().multiplyScalar(0.5)),
             ...bodyParams
         })
-        this.scale = new THREE.Vector3(1, 1, 1);
-        this.size = new THREE.Vector3().copy(this.originalSize);
-        mesh.position.copy(centrePos).multiplyScalar(-1);
+        mesh.position.copy(centrePos).multiplyScalar(-1); // centre mesh 
     }
 
     addObjectTo(scene, world) {
@@ -23,54 +29,59 @@ class GameObject {
     }
 
     getVelocity() {
-        return this.body.velocity;
+        return this.#velocity;
     }
 
     setVelocity(velocity) {
         if (this.body.type = CANNON.Body.STATIC) {
             throw new Error( 'Attempting to set velocity of static body' );
         }
-        this.body.velocity.copy(velocity);
+        this.#velocity.copy(velocity)
+        this.body.velocity.copy(this.#velocity);
     }
 
     getPosition() {
-        return this.body.position;
+        return this.#position;
     }
 
     setPosition(position) {
-        this.body.position.copy(position);
+        this.#position.copy(position);
+        this.body.position.copy(this.#position);
     }
     
     setBottomPosition(position) {
-        position.y += 0.5 * this.get
+        position.y += 0.5 * this.getSize().y;
+        this.setPosition(position);
     }
 
     getQuaternion() {
-        return this.body.quaternion;
+        return this.#quaternion;
     }
 
     setQuaternion(quaternion) {
-        this.body.quaternion.copy(quaternion);
+        this.#quaternion.copy(quaternion);
+        this.body.quaternion.copy(this.#quaternion);
     }
 
     getSize() {
         var bbox = new THREE.Box3().setFromObject(this.mesh);
-        return bbox.getSize(this.size);
+        return bbox.getSize(this.#size);
     }
 
     setSize(size) {
-        this.setScale(new THREE.Vector3(
-        size.x / this.originalSize.x,
-        size.y / this.originalSize.y,
-        size.z / this.originalSize.z));
+        this.#scale.set(
+        size.x / this.#originalSize.x,
+        size.y / this.#originalSize.y,
+        size.z / this.#originalSize.z);
+        this.setScale(this.#scale);
     }
 
     getScale() {
-        return this.scale;
+        return this.#scale;
     }
 
     setScale(scale) {
-        this.scale.copy(scale);
+        this.#scale.copy(scale);
         this.mesh.scale.copy(scale);
         this.body.removeShape(this.body.shapes[0]);
         this.body.addShape(new CANNON.Box(this.getSize().multiplyScalar(0.5)));
@@ -79,6 +90,8 @@ class GameObject {
     }
 
     updateMesh() {
+        this.#position.copy(this.body.position);
+        this.#velocity.copy(this.body.velocity);
         this.mesh.position.copy(this.body.position);
         this.mesh.quaternion.copy(this.body.quaternion);
     }
