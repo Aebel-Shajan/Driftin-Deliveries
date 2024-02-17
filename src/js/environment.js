@@ -97,27 +97,22 @@ function createTree() {
 
 function createFloorObject(scene, world) {
     // Create a ground plane
-    const plane = {
-        mesh: new THREE.Mesh(
-            new THREE.PlaneGeometry(1000, 1000),
-            new THREE.MeshStandardMaterial({ roughness: 0.9, color: 0xaaaaaa })
-        ),
-        body: new CANNON.Body(
-            {
-                shape: new CANNON.Plane(),
-                type: CANNON.Body.STATIC,
-                material: new CANNON.Material({
-                    friction: 0.5
-                }),
-            }
-        ),
+    const floorMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(1000, 1000),
+        new THREE.MeshStandardMaterial({ roughness: 0.9, color: 0xaaaaaa })
+    );
+    const floorPhysics = {
+        shape: new CANNON.Plane(),
+        type: CANNON.Body.STATIC,
+        material: new CANNON.Material({
+            friction: 0.5
+        }),
     }
-    plane.body.quaternion.setFromEuler(- Math.PI / 2, 0, 0);
-    plane.mesh.position.copy(plane.body.position);
-    plane.mesh.quaternion.copy(plane.body.quaternion);
-    scene.add(plane.mesh);
-    world.addBody(plane.body);
-    return plane;
+    const floorObject = new GameObject(floorMesh, floorPhysics);
+    floorObject.rotateAroundAxis(new THREE.Vector3(1, 0, 0), - Math.PI / 2);
+    floorObject.updateMesh();
+    floorObject.addObjectTo(scene, world);
+    return floorObject;
 }
 
 async function createBuildingObject(size) {
