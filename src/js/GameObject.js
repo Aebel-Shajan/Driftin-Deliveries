@@ -63,6 +63,10 @@ class GameObject {
         this.body.quaternion.copy(this.#quaternion);
     }
 
+    getOriginalSize() {
+        return this.#originalSize;
+    }
+
     getSize() {
         var bbox = new THREE.Box3().setFromObject(this.mesh);
         return bbox.getSize(this.#size);
