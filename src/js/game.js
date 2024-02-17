@@ -36,11 +36,11 @@ function updateCamera(player) {
   let newForward = getXZ(player.getForward()).normalize();
   const velocity = getXZ(player.getVelocity());
   const position = player.getPosition();
-  if (Math.abs(velocity.length()) > 0.1) {
+  if (Math.abs(velocity.length()) > 5) {
     newForward = velocity.normalize();
   }
   newForward.multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0));
-  cameraForward.lerp(newForward, 0.1);
+  cameraForward.lerp(newForward, 0.05);
   camera.position.copy(position.clone().add(cameraForward));
   camera.lookAt(position);
 }
@@ -53,9 +53,11 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.gammaOutput = true;
 let effect = new OutlineEffect( renderer, {
-  edgeStrength: 10.0
+  kernelSize: 100,
+  edgeStrength: 10.0,
+  blur: true,
+  height: 480,
 } );
-effect.blur = true;
 
 
 // Init 
@@ -85,6 +87,9 @@ function animate() {
   cannonDebugger.update();
 
   player.controlPlayer(c);
+  foodObject.body.applyForce(new CANNON.Vec3(0, 9.81*foodObject.body.mass, 0));
+  foodObject.updateMesh();
+
 
   // camera 
   updateCamera(player);
