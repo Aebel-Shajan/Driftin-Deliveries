@@ -56,7 +56,7 @@ function createPavementMesh(city, blockCoords) {
             { color: 0x999999 }
         )
     )
-    pavementMesh.position.copy(getCityBlockPos(city, blockCoords));
+    pavementMesh.position.copy(utils.getCityBlockPos(city, blockCoords));
     return pavementMesh;
 }
 
