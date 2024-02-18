@@ -1,13 +1,15 @@
 import * as THREE from 'three';
-import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js'
+import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect.js';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+
 import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
+
 import { c } from './controls.js';
 import {player} from './PlayerObject.js';
 import loadEnvironment from './environment.js';
 import updateHUD from './hud.js';
-import { foodObject } from './foodDelivery.js';
+import * as foodDelivery from './foodDelivery.js';
 
 const tempVec = new THREE.Vector3();
 
@@ -18,8 +20,8 @@ const world = new CANNON.World({
 });
 const cannonDebugger = new CannonDebugger(scene, world, {})
 const stats = Stats();
-stats.showPanel(  0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-document.body.appendChild( stats.dom );
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.dom);
 
 // Camera
 const camera = new THREE.PerspectiveCamera(
@@ -62,24 +64,23 @@ let effect = new OutlineEffect( renderer, {
 
 // Init 
 const city = {
-  citySize: 4,
+  citySize: 2,
   blockSize: 4,
   buildingWidth: 15,
   roadWidth: 25,
 }
-loadEnvironment(city, scene, world)
+await loadEnvironment(city, scene, world)
 player.setPosition({x: 0, y: 10, z: 0});
 player.addObjectTo(scene, world);
 scene.add(player.debug);
 var clock = new THREE.Clock();
-foodObject.addObjectTo(scene, world);
-foodObject.setPosition(tempVec.set(0, 1, 0));
-
+// foodDelivery.deliveryPosDebug(city, scene, world);
+foodDelivery.initDelivery(city, scene, world);
 
 // Animation loop
 function animate() {
   stats.begin();
-  let dt = clock.getDelta();
+  let dt = Math.min(clock.getDelta(), 1 / 10);
   updateHUD();
   requestAnimationFrame(animate);
   world.step(dt);
@@ -88,9 +89,7 @@ function animate() {
   player.controlPlayer(c);
   player.updateMesh();
   player.updateDebug();
-  foodObject.body.applyForce(new CANNON.Vec3(0, 9.81*foodObject.body.mass, 0));
-  foodObject.updateMesh();
-
+  foodDelivery.handleDelivery(city, player);
 
   // camera 
   updateCamera(player);

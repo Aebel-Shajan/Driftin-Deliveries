@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 
+const tempVec = new THREE.Vector3();
+
 export function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -52,9 +54,33 @@ export function getCityDeliveryPos(city, blockCoords, buildingCoords) {
     return deliveryPos
 }
 
+function randomPerimeterCoord(squareSize) {
+    const side = ["top", "bottom", "left", "right"][Math.floor(Math.random() * 4)];
+    let x, z;
+    switch (side) {
+        case "top":
+            x = Math.floor(Math.random() * squareSize);
+            z = 0;
+            break;
+        case "bottom":
+            x = Math.floor(Math.random() * squareSize);
+            z = squareSize - 1;
+            break;
+        case "left":
+            x = 0;
+            z = Math.floor(Math.random() * squareSize);
+            break;
+        case "right":
+            x = squareSize - 1;
+            z = Math.floor(Math.random() * squareSize);
+            break;
+    }
+    return { x, z };
+}
+
 export function getRandomDeliveryPos(city) {
-    const randomBlockCoords = { x: getRandomInt(0, 1) * city.size, z: getRandomInt(0, 1) * city.size };
-    const randomBuildingCoords = { x: getRandomInt(0, 1) * city.blockSize, z: getRandomInt(0, 1) * city.blockSize };
+    const randomBlockCoords = { x: getRandomInt(0, city.citySize) , z: getRandomInt(0, city.citySize) };
+    const randomBuildingCoords = randomPerimeterCoord(city.blockSize);
     const deliveryPos = getCityDeliveryPos(city, randomBlockCoords, randomBuildingCoords);
     return deliveryPos;
 }
