@@ -3,14 +3,14 @@ import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { GameObject } from "./gameObject.js";
 
-
 class PlayerObject extends GameObject {
+
     #forward = new THREE.Vector3();
     #sideward = new THREE.Vector3();
     #upward = new THREE.Vector3();
+
     constructor(mesh, bodyParams) {
         super(mesh, bodyParams);
-
         this.debug = new THREE.ArrowHelper(
             new THREE.Vector3(0, 0, 0),
             new THREE.Vector3(10, 10, 10),
@@ -18,6 +18,7 @@ class PlayerObject extends GameObject {
             0xffff00
         );
     }
+
     getRelativeVector(x, y, z) {
         const vec = new THREE.Vector3(x, y, z);
         vec.applyQuaternion(this.body.quaternion);
@@ -89,4 +90,3 @@ const playerPhysics = {
 const player = new PlayerObject(correctedMesh, playerPhysics);
 
 export { PlayerObject, player };
-
