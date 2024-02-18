@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { GameObject } from "./gameObject.js";
+import { GameObject } from "./GameObject.js";
 
 class PlayerObject extends GameObject {
 

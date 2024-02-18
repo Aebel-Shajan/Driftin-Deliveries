@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import * as UTILS from './utils.js';
-import { GameObject } from "./gameObject.js";
+import { GameObject } from "./GameObject.js";
+
 const loaderGLTF = new GLTFLoader();
 const tempVec = new THREE.Vector3();
 

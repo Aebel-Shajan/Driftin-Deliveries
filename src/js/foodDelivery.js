@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { GameObject } from './gameObject.js';
+import * as CANNON from 'cannon-es';
+import { GameObject } from './GameObject.js';
+
 const loader = new GLTFLoader();
 const tempVec = new THREE.Vector3();
 const foodModel = await loader.loadAsync("assets/models/pizza.glb");
