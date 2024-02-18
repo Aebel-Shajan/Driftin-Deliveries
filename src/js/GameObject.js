@@ -33,7 +33,7 @@ class GameObject {
     }
 
     setVelocity(velocity) {
-        if (this.body.type = CANNON.Body.STATIC) {
+        if (this.body.type === CANNON.Body.STATIC) {
             throw new Error( 'Attempting to set velocity of static body' );
         }
         this.#velocity.copy(velocity)
@@ -106,7 +106,7 @@ class GameObject {
         this.setQuaternion(newQuaternion);
     }
 
-    isCollidingWith(gameObject) {
+    overlaps(gameObject) {
         this.body.updateAABB();
         gameObject.body.updateAABB();
         return this.body.aabb.overlaps(gameObject.body.aabb);
