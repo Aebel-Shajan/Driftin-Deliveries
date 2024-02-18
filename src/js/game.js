@@ -4,7 +4,7 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 import { c } from './controls.js';
-import {player} from './player.js'
+import {player} from './PlayerObject.js';
 import loadEnvironment from './environment.js';
 import updateHUD from './hud.js';
 import { foodObject } from './foodDelivery.js';

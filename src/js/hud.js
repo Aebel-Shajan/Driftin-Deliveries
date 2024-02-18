@@ -1,4 +1,4 @@
-import { player } from "./player";
+import { player } from "./PlayerObject.js";
 import { c } from "./controls";
 
 function updateHUD() {
