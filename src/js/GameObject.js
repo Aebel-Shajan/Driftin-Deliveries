@@ -2,12 +2,14 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 
 class GameObject {
+
     #originalSize = new THREE.Vector3();
     #size = new THREE.Vector3();
     #scale = new THREE.Vector3();
     #position = new THREE.Vector3();
     #velocity = new THREE.Vector3();
     #quaternion = new THREE.Quaternion();
+    
     constructor(mesh, bodyParams) {
         let boundingBox = new THREE.Box3().setFromObject(mesh);
         let centrePos = boundingBox.getCenter(new THREE.Vector3());
@@ -111,6 +113,7 @@ class GameObject {
         gameObject.body.updateAABB();
         return this.body.aabb.overlaps(gameObject.body.aabb);
     }
+
 }
 
 export { GameObject };
