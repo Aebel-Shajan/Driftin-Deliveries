@@ -41,8 +41,9 @@ function updateCamera(player) {
 	if (Math.abs(velocity.length()) > 5) {
 		newForward = velocity.normalize();
 	}
-	newForward.multiplyScalar(-10).add(new THREE.Vector3(0, 2, 0));
-	cameraForward.lerp(newForward, 0.05);
+	newForward.multiplyScalar(-10).add(tempVec.set(0,1.5,0));
+	cameraForward.lerp(newForward, 0.2);
+	cameraForward.normalize().multiplyScalar(10);
 	camera.position.copy(position.clone().add(cameraForward));
 	camera.lookAt(position);
 }
