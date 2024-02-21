@@ -70,7 +70,7 @@ const city = {
 	buildingWidth: 15,
 	roadWidth: 25,
 }
-await loadEnvironment(city, scene, world)
+await loadEnvironment(city, scene, world);
 player.setPosition({ x: 0, y: 10, z: 0 });
 player.addObjectTo(scene, world);
 // scene.add(player.debug);

@@ -9,7 +9,7 @@ const tempVec = new THREE.Vector3();
 
 export default async function loadEnvironment(city, scene, world) {
     createFloorObject(scene, world);
-    createCity(city, scene, world);
+    await createCity(city, scene, world);
     setupBackground(scene);
     setupLighting(scene);
 }
