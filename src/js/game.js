@@ -81,7 +81,27 @@ foodDelivery.initDelivery(city, scene, world);
 function animate() {
 	stats.begin();
 	let dt = Math.min(clock.getDelta(), 1 / 10);
-	updateHUD();
+
+	let minimapMarkers = [
+		{
+			position: {x: player.getPosition().x, y: player.getPosition().z},
+			size: {x: player.getOriginalSize().x, y: player.getOriginalSize().x},
+			color: "#ff0000"
+		}
+	];
+	if (foodDelivery.foodObject.mesh.visible) {
+		const foodPos = foodDelivery.foodObject.getPosition();
+		minimapMarkers.push({
+			position: {x: foodPos.x, y: foodPos.z}
+		})
+	}
+	if (foodDelivery.victimObject.mesh.visible) {
+		const foodPos = foodDelivery.victimObject.getPosition();
+		minimapMarkers.push({
+			position: {x: foodPos.x, y: foodPos.z}
+		})
+	}
+	updateHUD(city, minimapMarkers);
 	requestAnimationFrame(animate);
 	world.step(dt);
 	cannonDebugger.update();
