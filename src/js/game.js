@@ -73,7 +73,7 @@ const city = {
 await loadEnvironment(city, scene, world)
 player.setPosition({ x: 0, y: 10, z: 0 });
 player.addObjectTo(scene, world);
-scene.add(player.debug);
+// scene.add(player.debug);
 var clock = new THREE.Clock();
 // foodDelivery.deliveryPosDebug(city, scene, world);
 foodDelivery.initDelivery(city, scene, world);
