@@ -7,14 +7,14 @@ import { GameObject } from "./GameObject.js";
 const loaderGLTF = new GLTFLoader();
 const tempVec = new THREE.Vector3();
 
-export default async function loadEnvironment(city, scene, world) {
+export default function loadEnvironment(city, scene, world) {
     createFloorObject(scene, world);
-    await createCity(city, scene, world);
+    createCity(city, scene, world);
     setupBackground(scene);
     setupLighting(scene);
 }
 
-async function createCity(city, scene, world) {
+function createCity(city, scene, world) {
     for (let blockX = 0; blockX < city.citySize; blockX++) {
         for (let blockZ = 0; blockZ < city.citySize; blockZ++) {
             const blockPavement = createPavementMesh(city, { x: blockX, z: blockZ });
@@ -24,7 +24,7 @@ async function createCity(city, scene, world) {
                 for (let buildingZ = 0; buildingZ < city.blockSize; buildingZ += addAmount) {
                     const buildingPos = utils.getCityBuildingPos(city, { x: blockX, z: blockZ }, { x: buildingX, z: buildingZ });
                     const buildingSize = tempVec.set(1, 0, 1).multiplyScalar(city.buildingWidth);
-                    let building = await createBuildingObject(buildingSize);
+                    let building = createBuildingObject(buildingSize);
                     building.setBottomPosition(buildingPos);
                     building.addObjectTo(scene, world);
                     let rotateAmount = 0;
@@ -89,10 +89,10 @@ function createFloorObject(scene, world) {
     return floorObject;
 }
 
-async function createBuildingObject(size) {
-    let buildingModel = await loaderGLTF.loadAsync(utils.getRandomBuilding());
+function createBuildingObject(size) {
+    let buildingMesh = utils.getRandomBuildingMesh();
     const buildingObject = new GameObject(
-        buildingModel.scene,
+        buildingMesh,
         {
             type: CANNON.Body.STATIC,
             material: new CANNON.Material({

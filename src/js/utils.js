@@ -1,7 +1,23 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const tempVec = new THREE.Vector3();
+const loader = new GLTFLoader();
+const buildingMeshes = [];
+await initBuildingMeshes();
+
+async function initBuildingMeshes() {
+    const buildingTypes = ["large_building", "skyscraper"];
+    const buildingLetter = 'ABCDEF';
+    for (let i = 0; i < buildingTypes.length; i++) {
+        for (let j = 0; j < buildingLetter.length; j++) {
+            const buildingPath = "assets/models/buildings/" + buildingTypes[i] + buildingLetter[j] + ".glb";
+            const buildingModel = await loader.loadAsync(buildingPath);
+            buildingMeshes.push(buildingModel);
+        }
+    }    
+}
 
 export function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -9,11 +25,9 @@ export function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
 }
 
-export function getRandomBuilding() {
-    const randomLetter = 'ABCDEF'.charAt(Math.floor(Math.random() * 6));
-    const buildingType = ["large_building", "skyscraper"][Math.floor(Math.random() * 2)];
-    const randomBuilding = "assets/models/buildings/" + buildingType + randomLetter + ".glb";
-    return randomBuilding;
+export function getRandomBuildingMesh() {
+    const buildingGLTF = buildingMeshes[getRandomInt(0, buildingMeshes.length)];
+    return buildingGLTF.scene.clone();
 }
 
 export function getCityBlockPos(city, blockCoords) {
