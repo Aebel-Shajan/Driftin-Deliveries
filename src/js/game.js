@@ -10,7 +10,7 @@ import { player } from './PlayerObject.js';
 import loadEnvironment from './environment.js';
 import { updateHUD, clearHUD } from './hud.js';
 import * as foodDelivery from './foodDelivery.js';
-import { Particles } from './particles.js';
+import { Particles } from './Particles.js';
 
 const tempVec = new THREE.Vector3();
 
