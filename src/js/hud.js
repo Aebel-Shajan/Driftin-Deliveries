@@ -1,14 +1,20 @@
 import { player } from "./PlayerObject.js";
 import { c } from "./controls";
 import * as foodDelivery from "./foodDelivery.js";
+import {timer } from "./game.js";
 
 let screen = { x: window.innerWidth, y: window.innerHeight }
-let canvas = document.querySelector("#overlay");
+let canvas = document.querySelector("#hud");
+console.log(screen)
 canvas.width = screen.x;
 canvas.height = screen.y;
 const ctx = canvas.getContext("2d");
 
-function updateHUD(city, markers) {
+export function clearHUD(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+export function updateHUD(city, markers) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const speed = player.body.velocity.length().toFixed(0);
     const maxSpeed = 100;
@@ -28,6 +34,19 @@ function updateHUD(city, markers) {
     ctx.stroke();
     drawMinimap(city, markers);
     drawCrossHair();
+    
+    ctx.beginPath();
+    const timerAngle = Math.PI *2 * (1- timer/(2*60))
+    ctx.arc(0.95*screen.x, 0.3*screen.y, 0.05*screen.y, 0, timerAngle);
+    ctx.lineTo(
+        0.95*screen.x,
+        0.3*screen.y,
+    );
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.font = "48px verdana";
+    ctx.fillText(parseInt(foodDelivery.score), 0.95*screen.x, 0.1*screen.y);
 }
 
 function drawMinimap(city, markers) {
@@ -91,9 +110,7 @@ function centredRect(ctx, pos, size) {
 
 window.addEventListener('resize', () => {
     screen = { x: window.innerWidth, y: window.innerHeight }
-    canvas = document.querySelector("#overlay");
+    canvas = document.querySelector("#hud");
     canvas.width = screen.x;
     canvas.height = screen.y;
 });
-
-export default updateHUD;
