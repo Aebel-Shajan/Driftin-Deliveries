@@ -10,6 +10,7 @@ import { player } from './PlayerObject.js';
 import loadEnvironment from './environment.js';
 import updateHUD from './hud.js';
 import * as foodDelivery from './foodDelivery.js';
+import { Particles } from './particles.js';
 
 const tempVec = new THREE.Vector3();
 
@@ -77,12 +78,19 @@ player.addObjectTo(scene, world);
 var clock = new THREE.Clock();
 // foodDelivery.deliveryPosDebug(city, scene, world);
 foodDelivery.initDelivery(city, scene, world);
+let smoke = new Particles(50, 0.1, 0xff000);
+smoke.addToScene(scene);
+
 
 // Animation loop
 function animate() {
+	// Always at start of loop
 	stats.begin();
 	let dt = Math.min(clock.getDelta(), 1 / 10);
+	requestAnimationFrame(animate);
+	world.step(dt);
 
+	// HUD
 	let minimapMarkers = [
 		{
 			position: {x: player.getPosition().x, y: player.getPosition().z},
@@ -103,17 +111,34 @@ function animate() {
 		})
 	}
 	updateHUD(city, minimapMarkers);
-	requestAnimationFrame(animate);
-	world.step(dt);
+
+	
 	// cannonDebugger.update();
 
+	// Player
 	player.controlPlayer(c);
 	player.updateMesh();
 	player.updateDebug();
+
+	// Food deliver
 	foodDelivery.handleDelivery(city, player);
 
+	// Smoke Fx
+	const showSmoke = player.getVelocity().clone().normalize().dot(player.getForward()) < 0.95;
+	const smokeVel = player.getRelativeVector(0, 0.1, -0.1);
+	if (c.ShiftLeft && showSmoke) {
+		const rightTyrePos = player.getPosition().clone().add(player.getRelativeVector(-0.5, -0.5, -1));
+		const leftTyrePos = player.getPosition().clone().add(player.getRelativeVector(0.5, -0.5, -1));
+		smoke.show(rightTyrePos, smokeVel, 1);
+		smoke.show(leftTyrePos, smokeVel, 1)
+	} else {
+		smoke.hide(smokeVel, 1);
+	}
+	
 	// camera 
 	updateCamera(player);
+
+	// Always at end of loop
 	effect.render(scene, camera);
 	stats.end();
 }
