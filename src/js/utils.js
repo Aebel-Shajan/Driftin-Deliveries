@@ -98,3 +98,14 @@ export function getRandomDeliveryPos(city) {
     const deliveryPos = getCityDeliveryPos(city, randomBlockCoords, randomBuildingCoords);
     return deliveryPos;
 }
+
+export function getPerpendicularBasis(vec) {
+    const mat = new THREE.Matrix3(
+        0, 1, 1,
+        -1, 0, 1,
+        -1, -1, 0
+    );
+    const perp1 = vec.clone().applyMatrix3(mat).normalize();
+    const perp2 = perp1.clone().cross(vec).normalize();
+    return [perp1, perp2];
+}
