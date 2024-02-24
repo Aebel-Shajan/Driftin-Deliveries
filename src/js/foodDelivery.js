@@ -55,7 +55,6 @@ function placeRandomlyInCity(object, city) {
     object.setBottomPosition(utils.getRandomDeliveryPos(city));
     object.setVelocity(tempVec.set(0, 0, 0));
     object.mesh.visible = true;
-    console.log(object.getPosition());
 }
 
 function hideFromPlayer(object) {
@@ -115,7 +114,6 @@ export function deliveryPosDebug(city, scene, world) {
                         {}
                     );
                     debugObject.setBottomPosition(utils.getRandomDeliveryPos(city, blockCoords, buildingCoords));
-                    console.log(debugObject.getPosition());
                     debugObject.updateMesh();
                     debugObject.addObjectTo(scene, world);
                 }
