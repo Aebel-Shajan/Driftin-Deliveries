@@ -26,7 +26,8 @@ function updateHUD(city, markers) {
         screen.y - Math.sin(speedAngle) * 0.2 * screen.y,
     );
     ctx.stroke();
-    drawMinimap(city, markers)
+    drawMinimap(city, markers);
+    drawCrossHair();
 }
 
 function drawMinimap(city, markers) {
@@ -70,6 +71,15 @@ function drawMinimap(city, markers) {
         ctx.fillStyle = marker.color;
         ctx.fill();
     }
+}
+
+
+function drawCrossHair() {
+    ctx.beginPath()
+    ctx.arc(0.5*screen.x, 0.5*screen.y, 3, 0, 2 * Math.PI);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.stroke();
 }
 
 function centredRect(ctx, pos, size) {
