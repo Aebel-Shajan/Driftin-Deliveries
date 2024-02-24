@@ -65,6 +65,7 @@ export function getCityDeliveryPos(city, blockCoords, buildingCoords) {
     offset.z *= offset.z ? 1 / Math.abs(offset.z) : 0;
     offset.multiplyScalar(0.5 * city.buildingWidth + 5);
     const deliveryPos = buildingPos.clone().add(offset).add(tempVec.set(0, 1, 0));
+    deliveryPos.add(tempVec.set(0,1,0));
     return deliveryPos
 }
 

@@ -20,8 +20,7 @@ export const foodObject = new GameObject(
         )
     }
 )
-foodObject.setScale(tempVec.set(1, 2, 1).multiplyScalar(3));
-foodObject.body.angularVelocity.set(0, 1, 0);
+
 
 // Customer Object
 const headRadius = 0.3;
@@ -70,10 +69,13 @@ function floatObject(object) {
 }
 
 export function initDelivery(city, scene, world) {
-    placeRandomlyInCity(foodObject, city);
-    hideFromPlayer(victimObject);
+    foodObject.rotateAroundAxis(new THREE.Vector3(1, 0, 0), Math.PI/2);
+    foodObject.setScale(tempVec.set(1, 2, 1).multiplyScalar(3));
+    
     foodObject.addObjectTo(scene, world);
     victimObject.addObjectTo(scene, world);
+    placeRandomlyInCity(foodObject, city);
+    hideFromPlayer(victimObject);
 }
 
 export function handleDelivery(city, player) {

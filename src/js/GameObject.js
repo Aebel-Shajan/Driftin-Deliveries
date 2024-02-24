@@ -94,13 +94,15 @@ class GameObject {
         this.body.addShape(new CANNON.Box(this.getSize().clone().multiplyScalar(0.5)));
         this.body.updateBoundingRadius();
         this.body.updateAABB();
+        this.updateMesh()
     }
 
     updateMesh() {
+        this.#quaternion.copy(this.body.quaternion);
         this.#position.copy(this.body.position);
         this.#velocity.copy(this.body.velocity);
-        this.mesh.position.copy(this.body.position);
-        this.mesh.quaternion.copy(this.body.quaternion);
+        this.mesh.position.copy(this.#position);
+        this.mesh.quaternion.copy(this.#quaternion);
     }
     
     rotateAroundAxis(axis, angle) {
