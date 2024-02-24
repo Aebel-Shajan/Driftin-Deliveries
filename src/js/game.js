@@ -8,7 +8,7 @@ import CannonDebugger from 'cannon-es-debugger';
 import { c } from './controls.js';
 import { player } from './PlayerObject.js';
 import loadEnvironment from './environment.js';
-import updateHUD from './hud.js';
+import { updateHUD, clearHUD } from './hud.js';
 import * as foodDelivery from './foodDelivery.js';
 import { Particles } from './particles.js';
 
@@ -42,7 +42,7 @@ function updateCamera(player) {
 	if (Math.abs(velocity.length()) > 5) {
 		newForward = velocity.normalize();
 	}
-	newForward.multiplyScalar(-10).add(tempVec.set(0,1.5,0));
+	newForward.multiplyScalar(-10).add(tempVec.set(0, 1.5, 0));
 	cameraForward.lerp(newForward, 0.17);
 	cameraForward.normalize().multiplyScalar(10);
 	camera.position.copy(position.clone().add(cameraForward));
@@ -77,10 +77,40 @@ player.addObjectTo(scene, world);
 // scene.add(player.debug);
 var clock = new THREE.Clock();
 // foodDelivery.deliveryPosDebug(city, scene, world);
+foodDelivery.foodObject.addObjectTo(scene, world);
+foodDelivery.victimObject.addObjectTo(scene, world);
 foodDelivery.initDelivery(city, scene, world);
 let smoke = new Particles(50, 0.1, 0xff000);
 smoke.addToScene(scene);
+const gameState = {
+	mainMenu: 0,
+	inGame: 1,
+	unlimitedMode: 2
+}
+let currentGameState = gameState.mainMenu;
+let menuCamPhi = 0;
+export let timer = 0;
+let highScore = localStorage.getItem("highScore") ? localStorage.getItem("highScore") : 0;
 
+document.querySelector("#score").innerHTML = highScore;
+
+// UI
+function hideUI() {
+	document.querySelector("#main-menu").style.display = "none";
+}
+function showUI() {
+	document.querySelector("#main-menu").style.display = "flex";
+}
+
+document.querySelector("#play-button").addEventListener("click", () => {
+	currentGameState = gameState.inGame;
+	hideUI();
+})
+
+document.querySelector("#unlimited-mode-button").addEventListener("click", () => {
+	currentGameState = gameState.unlimitedMode;
+	hideUI();
+})
 
 // Animation loop
 function animate() {
@@ -90,29 +120,63 @@ function animate() {
 	requestAnimationFrame(animate);
 	world.step(dt);
 
+	switch (currentGameState) {
+		case gameState.mainMenu:
+			panCamera(dt)
+			timer = 0;
+			break;
+		case gameState.inGame:
+			gameLoop();
+			foodDelivery.handleDelivery(city, player);
+			timer = timer + dt;
+			if (timer > 60 * 2) {
+				if (foodDelivery.score > highScore) {
+					localStorage.setItem("highScore", foodDelivery.score);
+					highScore = foodDelivery.score;
+					document.querySelector("#score").innerHTML = highScore;
+				}
+				currentGameState = gameState.mainMenu;
+				resetGameParameters();
+			}
+			break;
+		case gameState.unlimitedMode:
+			foodDelivery.hideFromPlayer(foodDelivery.foodObject);
+			foodDelivery.hideFromPlayer(foodDelivery.victimObject);
+			gameLoop()
+			break;
+	}
+
+	// Always at end of loop
+	effect.render(scene, camera);
+	stats.end();
+}
+
+
+
+function gameLoop() {
 	// HUD
 	let minimapMarkers = [
 		{
-			position: {x: player.getPosition().x, y: player.getPosition().z},
-			size: {x: player.getOriginalSize().x, y: player.getOriginalSize().x},
+			position: { x: player.getPosition().x, y: player.getPosition().z },
+			size: { x: player.getOriginalSize().x, y: player.getOriginalSize().x },
 			color: "#ff0000"
 		}
 	];
 	if (foodDelivery.foodObject.mesh.visible) {
 		const foodPos = foodDelivery.foodObject.getPosition();
 		minimapMarkers.push({
-			position: {x: foodPos.x, y: foodPos.z}
+			position: { x: foodPos.x, y: foodPos.z }
 		})
 	}
 	if (foodDelivery.victimObject.mesh.visible) {
 		const foodPos = foodDelivery.victimObject.getPosition();
 		minimapMarkers.push({
-			position: {x: foodPos.x, y: foodPos.z}
+			position: { x: foodPos.x, y: foodPos.z }
 		})
 	}
 	updateHUD(city, minimapMarkers);
 
-	
+
 	// cannonDebugger.update();
 
 	// Player
@@ -120,8 +184,6 @@ function animate() {
 	player.updateMesh();
 	player.updateDebug();
 
-	// Food deliver
-	foodDelivery.handleDelivery(city, player);
 
 	// Smoke Fx
 	const showSmoke = player.getVelocity().clone().normalize().dot(player.getForward()) < 0.95;
@@ -134,14 +196,17 @@ function animate() {
 	} else {
 		smoke.hide(smokeVel, 1);
 	}
-	
+
 	// camera 
 	updateCamera(player);
-
-	// Always at end of loop
-	effect.render(scene, camera);
-	stats.end();
 }
+
+function panCamera(dt) {
+	menuCamPhi += 0.05 * dt;
+	camera.position.set(200 * Math.cos(menuCamPhi), 100, 200 * Math.sin(menuCamPhi));
+	camera.lookAt(new THREE.Vector3(0, 0, 0));
+}
+
 
 // Handle window resize
 window.addEventListener('resize', onWindowResize, false);
@@ -150,6 +215,24 @@ function onWindowResize() {
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+window.addEventListener('keydown', (event) => {
+	if (event.code == 'Escape') {
+		resetGameParameters();
+		currentGameState = gameState.mainMenu;
+	}
+
+});
+
+function resetGameParameters() {
+	showUI();
+	clearHUD();
+	player.setPosition({ x: 0, y: 10, z: 0 });
+	player.setVelocity({ x: 0, y: 0, z: 0 });
+	player.setQuaternion(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), 0));
+	foodDelivery.initDelivery(city, scene, world);
+
 }
 
 // Start the animation loop
