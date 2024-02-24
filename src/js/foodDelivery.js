@@ -20,6 +20,9 @@ export const foodObject = new GameObject(
         )
     }
 )
+foodObject.setScale(tempVec.set(1, 2, 1).multiplyScalar(3));
+foodObject.setQuaternion(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI/2));
+foodObject.updateMesh();
 
 
 // Customer Object
@@ -49,6 +52,7 @@ const state = {
     deliver: "delivering food"
 };
 let currentState = state.search;
+export let score = 0;
 
 function placeRandomlyInCity(object, city) {
     object.setBottomPosition(utils.getRandomDeliveryPos(city));
@@ -56,7 +60,7 @@ function placeRandomlyInCity(object, city) {
     object.mesh.visible = true;
 }
 
-function hideFromPlayer(object) {
+export function hideFromPlayer(object) {
     object.setBottomPosition(tempVec.set(0, 100, 0));
     object.setVelocity(tempVec.set(0, 0, 0));
     object.mesh.visible = false;
@@ -69,13 +73,10 @@ function floatObject(object) {
 }
 
 export function initDelivery(city, scene, world) {
-    foodObject.rotateAroundAxis(new THREE.Vector3(1, 0, 0), Math.PI/2);
-    foodObject.setScale(tempVec.set(1, 2, 1).multiplyScalar(3));
-    
-    foodObject.addObjectTo(scene, world);
-    victimObject.addObjectTo(scene, world);
+    score = 0;
     placeRandomlyInCity(foodObject, city);
     hideFromPlayer(victimObject);
+    currentState = state.search;
 }
 
 export function handleDelivery(city, player) {
@@ -94,6 +95,7 @@ export function handleDelivery(city, player) {
                 hideFromPlayer(victimObject);
                 placeRandomlyInCity(foodObject, city);
                 currentState = state.search;
+                score += 1;
             }
             break;
         default:
