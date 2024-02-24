@@ -4,7 +4,7 @@
   "description": "Food delivery game made using Three.js and Cannon-Es",
   "main": "src/js/game.js",
   "scripts": {
-    "build": "webpack --mode=production"
+    "build": "webpack --mode=development"
   },
   "repository": {
     "type": "git",
