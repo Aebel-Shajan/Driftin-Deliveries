@@ -10,5 +10,5 @@ Drifting game where you deliver food in a city.
 * Collect food and feed them to the victims
 * Use the minimap (bottom left) to find food and customers
 
-Link: [https://drifitin-deliveries.vercel.app/](https://drifitin-deliveries.vercel.app/)
+Link: [https://driftin-deliveries.vercel.app/](https://driftin-deliveries.vercel.app/)
 (Might take a while to load)
